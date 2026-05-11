@@ -1,0 +1,134 @@
+name: docling_test
+
+on: workflow_call
+
+jobs:
+  docling_test:
+    runs-on: ubuntu-24.04
+    if: github.repository_owner == 'hwdsl2'
+    strategy:
+      matrix:
+        test_id: [no-env, with-env, with-key]
+      fail-fast: false
+    env:
+      TEST_ID: ${{ matrix.test_id }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Test
+        run: |
+          [ ! -x /usr/bin/docker ] && exit 1
+
+          cd "$GITHUB_WORKSPACE"
+          pwd
+          ls -ld docling.env.example
+
+          sed -i \
+            -e '/DOCLING_LOG_LEVEL=/s/# //' \
+            docling.env.example
+
+          set -x
+
+          docker build -t docling-test .
+
+          if [ "$TEST_ID" = "with-env" ]; then
+            docker run \
+              --name "$TEST_ID" \
+              --restart=always \
+              -v docling-test-data:/var/lib/docling \
+              -v ./docling.env.example:/docling.env:ro \
+              -p 5001:5001/tcp \
+              -d docling-test
+          elif [ "$TEST_ID" = "no-env" ]; then
+            docker run \
+              --name "$TEST_ID" \
+              --restart=always \
+              -v docling-test-data:/var/lib/docling \
+              -p 5001:5001/tcp \
+              -d docling-test
+          elif [ "$TEST_ID" = "with-key" ]; then
+            docker run \
+              --name "$TEST_ID" \
+              --restart=always \
+              -v docling-test-data:/var/lib/docling \
+              -e DOCLING_API_KEY=test-docling-key \
+              -p 5001:5001/tcp \
+              -d docling-test
+          fi
+
+          # Wait for server to be ready (up to 600 seconds for model loading)
+          i=0
+          while [ "$i" -lt 600 ]; do
+            if docker exec "$TEST_ID" curl -sf http://127.0.0.1:5001/ready >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+            i=$((i + 1))
+          done
+
+          docker ps | grep "$TEST_ID"
+          docker logs "$TEST_ID"
+
+          # Verify health endpoint
+          docker exec "$TEST_ID" curl -sf http://127.0.0.1:5001/health
+
+          # Verify ready endpoint
+          docker exec "$TEST_ID" curl -sf http://127.0.0.1:5001/ready
+
+          # Build optional auth header args
+          docling_curl_args=()
+          [ "$TEST_ID" = "with-key" ] && docling_curl_args=(-H "X-Api-Key: test-docling-key")
+
+          # Test auth enforcement when DOCLING_API_KEY is set
+          if [ "$TEST_ID" = "with-key" ]; then
+            http_code=$(curl -s -o /dev/null -w '%{http_code}' \
+              -X POST http://127.0.0.1:5001/v1/convert/source \
+              -H "Content-Type: application/json" \
+              -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}' \
+              2>/dev/null || true)
+            [ "$http_code" = "401" ] || [ "$http_code" = "403" ] || { echo "Expected 401/403 without key, got $http_code"; exit 1; }
+          fi
+
+          # Verify version endpoint (auth-exempt)
+          curl -sf http://127.0.0.1:5001/version | grep -q "docling"
+
+          # Test docling_manage commands
+          docker exec "$TEST_ID" docling_manage --showinfo
+          docker exec "$TEST_ID" docling_manage --showformats
+          docker exec "$TEST_ID" docling_manage --version
+
+          # Test document conversion from URL
+          curl -sf http://127.0.0.1:5001/v1/convert/source \
+            "${docling_curl_args[@]}" \
+            -H "Content-Type: application/json" \
+            -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}' \
+            | grep -q "document"
+
+          docker restart "$TEST_ID"
+
+          sleep 15
+
+          # Wait for server to come back (up to 300 seconds)
+          i=0
+          while [ "$i" -lt 300 ]; do
+            if docker exec "$TEST_ID" curl -sf http://127.0.0.1:5001/ready >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+            i=$((i + 1))
+          done
+
+          docker ps | grep "$TEST_ID"
+          docker logs "$TEST_ID"
+
+          # Verify server is healthy after restart
+          docker exec "$TEST_ID" curl -sf http://127.0.0.1:5001/health
+
+          exit 0
+      - name: Clear
+        if: always()
+        run: |
+          docker rm -f "$TEST_ID" || true
+          docker volume rm docling-test-data || true
+          docker rmi docling-test || true
