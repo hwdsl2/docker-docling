@@ -1,0 +1,14 @@
+services:
+  docling:
+    image: hwdsl2/docling-server
+    container_name: docling
+    restart: always
+    ports:
+      - "5001:5001/tcp"  # For a host-based reverse proxy, change to "127.0.0.1:5001:5001/tcp"
+    volumes:
+      - docling-data:/var/lib/docling
+      - ./docling.env:/docling.env:ro
+
+volumes:
+  docling-data:
+    name: docling-data
