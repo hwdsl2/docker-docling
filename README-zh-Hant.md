@@ -31,6 +31,10 @@
 
 **提示：** Docling、Whisper、Kokoro、Embeddings、LiteLLM、Ollama 和 MCP 閘道可以[搭配使用](#與其他-ai-服務搭配使用)，在您自己的伺服器上建立完整的自託管 AI 系統 — 從文件匯入和 RAG 到完整的語音輸入/輸出。
 
+## 社群
+
+- 討論與展示：[r/selfhostedstack](https://www.reddit.com/r/selfhostedstack/)
+
 ## 快速開始
 
 使用以下命令啟動文件解析伺服器：

@@ -31,6 +31,10 @@
 
 **提示：** Docling、Whisper、Kokoro、Embeddings、LiteLLM、Ollama 和 MCP 网关可以[配合使用](#与其他-ai-服务配合使用)，在您自己的服务器上搭建完整的自托管 AI 系统 — 从文档导入和 RAG 到完整的语音输入/输出。
 
+## 社区
+
+- 讨论与展示：[r/selfhostedstack](https://www.reddit.com/r/selfhostedstack/)
+
 ## 快速开始
 
 使用以下命令启动文档解析服务器：

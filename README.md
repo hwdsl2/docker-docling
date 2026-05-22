@@ -31,6 +31,10 @@ Docker image to run a self-hosted document parsing server, powered by [IBM Docli
 
 **Tip:** Docling, Whisper, Kokoro, Embeddings, LiteLLM, Ollama, and MCP Gateway can be [used together](#using-with-other-ai-services) to build a complete, self-hosted AI stack on your own server — from document ingestion and RAG to full voice I/O.
 
+## Community
+
+- Discussions and showcases: [r/selfhostedstack](https://www.reddit.com/r/selfhostedstack/)
+
 ## Quick start
 
 Use this command to set up a document parsing server:
