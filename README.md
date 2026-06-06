@@ -399,6 +399,27 @@ docker exec docling docling_manage --version
 
 Output format is controlled per-request via the API. See the interactive API docs at `/docs` for full request options.
 
+## Securing your server
+
+If your Docling server is reachable from the public internet — even briefly — apply at minimum these protections. Docling accepts uploaded documents and performs CPU/GPU-intensive parsing, making an unprotected endpoint a target for resource abuse and data leakage.
+
+**1. Set an API key.** Generate a strong random key and set `DOCLING_API_KEY` in your `env` file. All conversion and chunking API requests must then include `X-Api-Key: <key>`. Health, version, and documentation endpoints remain accessible without the key.
+
+```bash
+# Generate a 32-byte random key
+openssl rand -hex 32
+```
+
+**2. Bind to localhost when fronted by a reverse proxy.** Replace `-p 5001:5001` with `-p 127.0.0.1:5001:5001` (or change `"5001:5001/tcp"` to `"127.0.0.1:5001:5001/tcp"` in `docker-compose.yml`) so the unencrypted port is not reachable directly from outside the host.
+
+**3. Limit upload size.** Document files can be large. Set `DOCLING_MAX_FILE_SIZE` in your `env` file (e.g. `DOCLING_MAX_FILE_SIZE=50000000` for ~50 MB) and configure your reverse proxy to enforce the same limit (e.g. nginx `client_max_body_size 50M;`). This bounds the disk and memory footprint of a single request.
+
+**4. Mind the log level.** `DOCLING_LOG_LEVEL=DEBUG` may write document content to logs. Keep it at `INFO` or higher on shared systems.
+
+**5. Enable CORS at the proxy if calling from a browser.** The server does not set `Access-Control-Allow-Origin` headers by default; add them at your reverse proxy if you intend to call the API directly from a web page on a different origin.
+
+**6. Consider rate limiting.** Place a rate-limit (e.g. nginx `limit_req_zone`, Caddy `rate_limit`) in front of the server to cap concurrent document conversion requests per client IP.
+
 ## Using a reverse proxy
 
 For internet-facing deployments, place a reverse proxy in front of the Docling server to handle HTTPS termination. The server works without HTTPS on a local or trusted network, but HTTPS is recommended when the API endpoint is exposed to the internet.

@@ -399,6 +399,27 @@ docker exec docling docling_manage --version
 
 輸出格式透過 API 按請求控制。請參閱 `/docs` 上的互動式 API 文件了解完整請求選項。
 
+## 保護你的伺服器
+
+如果你的 Docling 伺服器可從公用網際網路存取 —— 即使只是短暫可達 —— 也請至少採取以下保護措施。Docling 接受上傳的文件並進行 CPU/GPU 密集型解析，未做防護的介面可能遭受資源濫用和資料洩露。
+
+**1. 設定 API 金鑰。** 產生一個強隨機金鑰並在 `env` 檔案中設定 `DOCLING_API_KEY`。之後所有轉換和分塊 API 請求必須包含 `X-Api-Key: <key>` 標頭。健康檢查、版本和文件端點無需金鑰即可存取。
+
+```bash
+# 產生 32 位元組的隨機金鑰
+openssl rand -hex 32
+```
+
+**2. 在反向代理後方時繫結到 localhost。** 將 `-p 5001:5001` 替換為 `-p 127.0.0.1:5001:5001`（或在 `docker-compose.yml` 中將 `"5001:5001/tcp"` 改為 `"127.0.0.1:5001:5001/tcp"`），使未加密連接埠無法從主機外部直接存取。
+
+**3. 限制上傳大小。** 文件檔案可能很大。在 `env` 檔案中設定 `DOCLING_MAX_FILE_SIZE`（例如 `DOCLING_MAX_FILE_SIZE=50000000` 約為 50 MB），並設定反向代理強制相同限制（例如 nginx `client_max_body_size 50M;`），從而限制單一請求佔用的磁碟和記憶體。
+
+**4. 注意日誌等級。** `DOCLING_LOG_LEVEL=DEBUG` 可能會將文件內容寫入日誌。在共用系統上請保持 `INFO` 或更高等級。
+
+**5. 瀏覽器呼叫時在代理處啟用 CORS。** 本伺服器預設不設定 `Access-Control-Allow-Origin` 回應標頭；若需在不同來源的網頁中直接呼叫本 API，請在反向代理處新增 CORS 標頭。
+
+**6. 考慮限流。** 在伺服器前部署限流（如 nginx `limit_req_zone`、Caddy `rate_limit`），限制每個用戶端 IP 的並行文件轉換請求數。
+
 ## 使用反向代理
 
 如需面向公網部署，可在文件解析伺服器前置反向代理處理 HTTPS 終止。在本機或可信網路中使用無需 HTTPS，但將 API 端點暴露在公網時建議啟用 HTTPS。
