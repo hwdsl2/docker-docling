@@ -4,7 +4,7 @@
 
 [![构建状态](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-docling-server.svg)](https://hub.docker.com/r/hwdsl2/docling-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
 
-[Docker AI Stack](https://github.com/hwdsl2/docker-ai-stack/blob/main/README-zh.md) 的一部分 ─ 一条命令部署完整的自托管 AI 技术栈。
+[Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh.md) 的一部分 ─ 一条命令部署完整的自托管 AI 技术栈。
 
 使用 [IBM Docling](https://github.com/docling-project/docling) 在 Docker 容器中运行文档解析服务器。将 PDF、DOCX、PPTX、XLSX、HTML、Markdown、LaTeX 等格式转换为结构化的 Markdown、JSON 或 HTML 输出。简单、私密、可自托管。
 
@@ -25,7 +25,7 @@
 
 **另提供：**
 
-- AI 套件：[Docker AI Stack](https://github.com/hwdsl2/docker-ai-stack/blob/main/README-zh.md)
+- AI 套件：[Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh.md)
 - 相关 AI 服务：[Whisper (STT)](https://github.com/hwdsl2/docker-whisper/blob/main/README-zh.md)、[Kokoro (TTS)](https://github.com/hwdsl2/docker-kokoro/blob/main/README-zh.md)、[Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-zh.md)、[LiteLLM](https://github.com/hwdsl2/docker-litellm/blob/main/README-zh.md)、[Ollama (LLM)](https://github.com/hwdsl2/docker-ollama/blob/main/README-zh.md)、[MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway/blob/main/README-zh.md)
 
 **提示：** Docling、Whisper、Kokoro、Embeddings、LiteLLM、Ollama 和 MCP 网关可以[配合使用](#与其他-ai-服务配合使用)，在您自己的服务器上搭建完整的自托管 AI 系统 — 从文档导入和 RAG 到完整的语音输入/输出。
@@ -499,7 +499,7 @@ Docling、Whisper (STT)、Embeddings、LiteLLM、Kokoro (TTS)、Ollama (LLM) 和
 | **[Ollama (LLM)](https://github.com/hwdsl2/docker-ollama/blob/main/README-zh.md)** | 运行本地 LLM 模型（llama3、qwen、mistral 等） | `11434` |
 | **[MCP 网关](https://github.com/hwdsl2/docker-mcp-gateway/blob/main/README-zh.md)** | 将 AI 服务作为 MCP 工具暴露给 AI 助手（Claude、Cursor 等） | `3000` |
 
-**另请参阅：[Docker AI Stack](https://github.com/hwdsl2/docker-ai-stack/blob/main/README-zh.md)** — 一条命令即可部署完整技术栈，提供现成的配置和流水线示例。
+**另请参阅：[Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh.md)** — 一条命令即可部署完整技术栈，提供现成的配置和流水线示例。
 
 ## 技术细节
 
