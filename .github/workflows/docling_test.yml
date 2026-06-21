@@ -8,7 +8,7 @@ jobs:
     if: github.repository_owner == 'hwdsl2'
     strategy:
       matrix:
-        test_id: [no-env, with-env, with-key]
+        test_id: [no-env, with-env, with-key, empty-key, existing-no-key]
       fail-fast: false
     env:
       TEST_ID: ${{ matrix.test_id }}
@@ -31,6 +31,14 @@ jobs:
           set -x
 
           docker build -t docling-test .
+
+          if [ "$TEST_ID" = "existing-no-key" ]; then
+            docker volume create docling-test-data
+            docker run --rm --user 0:0 --entrypoint sh \
+              -v docling-test-data:/data \
+              docling-test \
+              -c 'chown 1001:0 /data && chmod g=u /data && printf "%s" "existing" > /data/.server_addr && chown 1001:0 /data/.server_addr'
+          fi
 
           if [ "$TEST_ID" = "with-env" ]; then
             docker run \
@@ -55,6 +63,21 @@ jobs:
               -e DOCLING_API_KEY=test-docling-key \
               -p 5001:5001/tcp \
               -d docling-test
+          elif [ "$TEST_ID" = "empty-key" ]; then
+            docker run \
+              --name "$TEST_ID" \
+              --restart=always \
+              -v docling-test-data:/var/lib/docling \
+              -e DOCLING_API_KEY= \
+              -p 5001:5001/tcp \
+              -d docling-test
+          elif [ "$TEST_ID" = "existing-no-key" ]; then
+            docker run \
+              --name "$TEST_ID" \
+              --restart=always \
+              -v docling-test-data:/var/lib/docling \
+              -p 5001:5001/tcp \
+              -d docling-test
           fi
 
           # Wait for server to be ready (up to 600 seconds for model loading)
@@ -69,6 +92,9 @@ jobs:
 
           docker ps | grep "$TEST_ID"
           docker logs "$TEST_ID"
+          if [ "$TEST_ID" = "existing-no-key" ]; then
+            docker logs "$TEST_ID" 2>&1 | grep -q 'Preserving no-auth behavior for backward compatibility'
+          fi
 
           # Verify health endpoint
           docker exec "$TEST_ID" curl -sf http://127.0.0.1:5001/health
@@ -78,16 +104,35 @@ jobs:
 
           # Build optional auth header args
           docling_curl_args=()
-          [ "$TEST_ID" = "with-key" ] && docling_curl_args=(-H "X-Api-Key: test-docling-key")
-
-          # Test auth enforcement when DOCLING_API_KEY is set
           if [ "$TEST_ID" = "with-key" ]; then
+            docling_curl_args=(-H "X-Api-Key: test-docling-key")
+          elif [ "$TEST_ID" = "empty-key" ] || [ "$TEST_ID" = "existing-no-key" ]; then
+            docling_key=$(docker exec "$TEST_ID" docling_manage --getkey 2>/dev/null || true)
+            [ -z "$docling_key" ] || { echo "Expected no Docling API key, got $docling_key"; exit 1; }
+            docker exec "$TEST_ID" test ! -f /var/lib/docling/.api_key
+            docker exec "$TEST_ID" test ! -f /var/lib/docling/.auto_api_key_created
+          else
+            docling_key=$(docker exec "$TEST_ID" docling_manage --getkey)
+            [ -n "$docling_key" ] || { echo "Generated Docling API key not found"; exit 1; }
+            docker exec "$TEST_ID" test -f /var/lib/docling/.auto_api_key_created
+            docling_curl_args=(-H "X-Api-Key: $docling_key")
+          fi
+
+          if [ "${#docling_curl_args[@]}" -gt 0 ]; then
+            # Test auth enforcement when DOCLING_API_KEY is set/generated
             http_code=$(curl -s -o /dev/null -w '%{http_code}' \
               -X POST http://127.0.0.1:5001/v1/convert/source \
               -H "Content-Type: application/json" \
               -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}' \
               2>/dev/null || true)
             [ "$http_code" = "401" ] || [ "$http_code" = "403" ] || { echo "Expected 401/403 without key, got $http_code"; exit 1; }
+          else
+            # Explicit empty keys and existing no-key volumes preserve no-auth behavior.
+            http_code=$(curl -s -o /dev/null -w '%{http_code}' \
+              -X POST http://127.0.0.1:5001/v1/convert/source \
+              -H "Content-Type: application/json" \
+              -d '{}' 2>/dev/null || true)
+            [ "$http_code" != "401" ] && [ "$http_code" != "403" ] || { echo "Expected no auth, got $http_code"; exit 1; }
           fi
 
           # Verify version endpoint (auth-exempt)
