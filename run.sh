@@ -42,6 +42,8 @@ if [ ! -f "/.dockerenv" ] && [ ! -f "/run/.containerenv" ] \
   exiterr "This script ONLY runs in a container (e.g. Docker, Podman)."
 fi
 
+DOCLING_API_KEY_WAS_SET=${DOCLING_API_KEY+x}
+
 # Read and sanitize environment variables
 DOCLING_PORT=$(nospaces "$DOCLING_PORT")
 DOCLING_PORT=$(noquotes "$DOCLING_PORT")
@@ -120,6 +122,38 @@ fi
 
 mkdir -p /var/lib/docling 2>/dev/null || true
 
+DATA_DIR="/var/lib/docling"
+API_KEY_FILE="${DATA_DIR}/.api_key"
+AUTH_ENABLED_FILE="${DATA_DIR}/.auth_enabled"
+AUTO_API_KEY_MARKER="${DATA_DIR}/.auto_api_key_created"
+data_mounted=false
+data_existing=false
+
+if grep -q " ${DATA_DIR} " /proc/mounts 2>/dev/null; then
+  data_mounted=true
+fi
+if $data_mounted && find "$DATA_DIR" -mindepth 1 -maxdepth 1 -print -quit 2>/dev/null | grep -q .; then
+  data_existing=true
+fi
+
+if [ -n "$DOCLING_API_KEY" ]; then
+  printf '%s' "$DOCLING_API_KEY" > "$API_KEY_FILE" 2>/dev/null || true
+  chmod 600 "$API_KEY_FILE" 2>/dev/null || true
+elif [ -z "$DOCLING_API_KEY_WAS_SET" ] && [ -f "$API_KEY_FILE" ]; then
+  DOCLING_API_KEY=$(cat "$API_KEY_FILE")
+elif [ -z "$DOCLING_API_KEY_WAS_SET" ] && $data_mounted && ! $data_existing; then
+  DOCLING_API_KEY="docling-$(head -c 32 /dev/urandom | od -A n -t x1 | tr -d ' \n' | head -c 48)"
+  printf '%s' "$DOCLING_API_KEY" > "$API_KEY_FILE" 2>/dev/null || true
+  chmod 600 "$API_KEY_FILE" 2>/dev/null || true
+  printf '%s\n' "true" > "$AUTO_API_KEY_MARKER" 2>/dev/null || true
+  chmod 600 "$AUTO_API_KEY_MARKER" 2>/dev/null || true
+fi
+if [ -n "$DOCLING_API_KEY" ]; then
+  printf '%s' "1" > "$AUTH_ENABLED_FILE" 2>/dev/null || true
+else
+  printf '%s' "0" > "$AUTH_ENABLED_FILE" 2>/dev/null || true
+fi
+
 # Map our simplified env vars to upstream docling-serve env vars
 export UVICORN_PORT="$DOCLING_PORT"
 export UVICORN_HOST="0.0.0.0"
@@ -177,6 +211,15 @@ if ! grep -q " /var/lib/docling " /proc/mounts 2>/dev/null; then
   echo "Note: /var/lib/docling is not mounted. Runtime data will be lost on"
   echo "      container removal. Mount a Docker volume at /var/lib/docling"
   echo "      to persist data across container restarts."
+  if [ -z "$DOCLING_API_KEY" ] && [ -z "$DOCLING_API_KEY_WAS_SET" ]; then
+    echo "      API key authentication was not auto-enabled because the"
+    echo "      data directory is not persistent."
+  fi
+elif [ -z "$DOCLING_API_KEY" ] && [ -z "$DOCLING_API_KEY_WAS_SET" ] && $data_existing; then
+  echo
+  echo "Warning: Existing Docling data was found but no API key is configured."
+  echo "         Preserving no-auth behavior for backward compatibility."
+  echo "         Set DOCLING_API_KEY to enable authentication."
 fi
 
 echo

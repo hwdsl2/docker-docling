@@ -12,6 +12,8 @@ export PATH="/opt/app-root/bin:${PATH}"
 DOCLING_DATA="/var/lib/docling"
 PORT_FILE="${DOCLING_DATA}/.port"
 SERVER_ADDR_FILE="${DOCLING_DATA}/.server_addr"
+API_KEY_FILE="${DOCLING_DATA}/.api_key"
+AUTH_ENABLED_FILE="${DOCLING_DATA}/.auth_enabled"
 
 exiterr() { echo "Error: $1" >&2; exit 1; }
 
@@ -29,6 +31,8 @@ Usage: docker exec <container> docling_manage [options]
 
 Options:
   --showinfo                           show server info (endpoint, config)
+  --showkey                            show the API key, if configured
+  --getkey                             output the API key (machine-readable, no decoration)
   --showformats                        list supported input and output formats
   --downloadmodels                     download/update layout, OCR, and table models
   --version                            show docling and docling-serve versions
@@ -37,6 +41,8 @@ Options:
 
 Examples:
   docker exec docling docling_manage --showinfo
+  docker exec docling docling_manage --showkey
+  docker exec docling docling_manage --getkey
   docker exec docling docling_manage --showformats
   docker exec docling docling_manage --downloadmodels
   docker exec docling docling_manage --version
@@ -67,6 +73,22 @@ load_config() {
   else
     SERVER_ADDR="<server ip>"
   fi
+
+  if [ -f "$AUTH_ENABLED_FILE" ]; then
+    DOCLING_AUTH_ENABLED=$(cat "$AUTH_ENABLED_FILE")
+  fi
+
+  if [ "$DOCLING_AUTH_ENABLED" != 0 ] && [ -z "$DOCLING_API_KEY" ] && [ -f "$API_KEY_FILE" ]; then
+    DOCLING_API_KEY=$(cat "$API_KEY_FILE")
+  fi
+
+  if [ -z "$DOCLING_AUTH_ENABLED" ]; then
+    if [ -n "$DOCLING_API_KEY" ]; then
+      DOCLING_AUTH_ENABLED=1
+    else
+      DOCLING_AUTH_ENABLED=0
+    fi
+  fi
 }
 
 check_server() {
@@ -77,6 +99,8 @@ check_server() {
 
 parse_args() {
   show_info=0
+  show_key=0
+  get_key=0
   show_formats=0
   download_models=0
   show_version=0
@@ -85,6 +109,14 @@ parse_args() {
     case "$1" in
       --showinfo)
         show_info=1
+        shift
+        ;;
+      --showkey)
+        show_key=1
+        shift
+        ;;
+      --getkey)
+        get_key=1
         shift
         ;;
       --showformats)
@@ -111,7 +143,7 @@ parse_args() {
 
 check_args() {
   local action_count
-  action_count=$((show_info + show_formats + download_models + show_version))
+  action_count=$((show_info + show_key + get_key + show_formats + download_models + show_version))
 
   if [ "$action_count" -eq 0 ]; then
     show_usage
@@ -119,6 +151,46 @@ check_args() {
   if [ "$action_count" -gt 1 ]; then
     show_usage "Specify only one action at a time."
   fi
+}
+
+do_show_key() {
+  if [ "$DOCLING_AUTH_ENABLED" != 1 ]; then
+    exiterr "API key authentication is disabled for this container."
+  fi
+
+  if [ -z "$DOCLING_API_KEY" ]; then
+    if [ -f "$API_KEY_FILE" ]; then
+      DOCLING_API_KEY=$(cat "$API_KEY_FILE")
+    else
+      exiterr "API key not found. Authentication may be disabled for this container."
+    fi
+  fi
+
+  echo
+  echo "==========================================================="
+  echo " Docling API key"
+  echo "==========================================================="
+  echo "${DOCLING_API_KEY}"
+  echo "==========================================================="
+  echo
+  echo "Use with: -H \"X-Api-Key: ${DOCLING_API_KEY}\""
+  echo
+}
+
+do_get_key() {
+  if [ "$DOCLING_AUTH_ENABLED" != 1 ]; then
+    exit 1
+  fi
+
+  if [ -z "$DOCLING_API_KEY" ]; then
+    if [ -f "$API_KEY_FILE" ]; then
+      DOCLING_API_KEY=$(cat "$API_KEY_FILE")
+    else
+      exit 1
+    fi
+  fi
+
+  printf '%s' "$DOCLING_API_KEY"
 }
 
 do_show_info() {
@@ -139,7 +211,14 @@ do_show_info() {
   echo "Example — convert a document from URL:"
   echo "  curl -X POST http://${SERVER_ADDR}:${DOCLING_PORT}/v1/convert/source \\"
   echo "    -H 'Content-Type: application/json' \\"
+  if [ "$DOCLING_AUTH_ENABLED" = 1 ]; then
+    echo "    -H \"X-Api-Key: <api-key>\" \\"
+  fi
   echo "    -d '{\"sources\": [{\"kind\": \"http\", \"url\": \"https://arxiv.org/pdf/2501.17887\"}]}'"
+  if [ "$DOCLING_AUTH_ENABLED" = 1 ]; then
+    echo
+    echo "Use '--showkey' to display the API key."
+  fi
   echo
 }
 
@@ -227,6 +306,16 @@ check_args
 if [ "$show_info" = 1 ]; then
   check_server
   do_show_info
+  exit 0
+fi
+
+if [ "$show_key" = 1 ]; then
+  do_show_key
+  exit 0
+fi
+
+if [ "$get_key" = 1 ]; then
+  do_get_key
   exit 0
 fi
 
