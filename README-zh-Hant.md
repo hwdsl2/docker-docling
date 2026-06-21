@@ -51,7 +51,7 @@ docker run \
     -d hwdsl2/docling-server
 ```
 
-**注：** 如需面向網際網路的部署，**強烈建議**使用[反向代理](#使用反向代理)來新增 HTTPS。此時，還應將上述 `docker run` 命令中的 `-p 5001:5001` 替換為 `-p 127.0.0.1:5001:5001`，以防止從外部直接存取未加密連接埠。當伺服器可從公網存取時，請在 `env` 檔案中設定 `DOCLING_API_KEY`。
+**注：** 如需面向網際網路的部署，**強烈建議**使用[反向代理](#使用反向代理)來新增 HTTPS。此時，還應將上述 `docker run` 命令中的 `-p 5001:5001` 替換為 `-p 127.0.0.1:5001:5001`，以防止從外部直接存取未加密連接埠。
 
 <details>
 <summary><strong>使用 docker-compose 搭配 GPU（NVIDIA CUDA）</strong></summary>
@@ -165,19 +165,18 @@ docker image tag quay.io/hwdsl2/docling-server hwdsl2/docling-server
 docker pull hwdsl2/docling-server:cuda
 ```
 
-
 支援平台：`linux/amd64` 和 `linux/arm64`。`:cuda` 標籤僅支援 `linux/amd64`。
 
 ## 環境變數
 
-所有變數均為可選。設定 `DOCLING_API_KEY` 可啟用 API 金鑰認證。
+所有變數均為可選。掛載 `/var/lib/docling` 資料卷的新安裝會自動產生 API 金鑰。沒有金鑰的既有安裝會保持開放以相容舊行為。
 
 此 Docker 映像使用以下變數，可在 `env` 檔案中宣告（參見[範例](docling.env.example)）：
 
 | 變數 | 說明 | 預設值 |
 |---|---|---|
 | `DOCLING_PORT` | API 的 HTTP 連接埠（1–65535）。 | `5001` |
-| `DOCLING_API_KEY` | 可選的 API 金鑰。設定後，轉換/分塊 API 請求須包含 `X-Api-Key: <key>` 標頭。健康檢查和版本端點不需要金鑰。 | *（未設定）* |
+| `DOCLING_API_KEY` | 可選的 API 金鑰。新持久化安裝會自動產生。設定後，轉換/分塊 API 請求須包含 `X-Api-Key: <key>` 標頭。健康檢查和版本端點不需要金鑰。明確設定為空可停用驗證。 | 新持久化安裝自動產生 |
 | `DOCLING_LOG_LEVEL` | 日誌等級：`DEBUG`、`INFO`、`WARNING`、`ERROR`。 | `INFO` |
 | `DOCLING_WORKERS` | Uvicorn 工作程序數。在多核心系統上增加可提高吞吐量。每個工作程序獨立載入模型（更高記憶體）。 | `1` |
 | `DOCLING_ENABLE_UI` | 在 `/ui` 啟用 Web UI 示範介面。設為 `true` 或 `false`。 | `false` |
@@ -247,7 +246,7 @@ volumes:
     name: docling-data
 ```
 
-**注：** 如需面向公網部署，強烈建議使用[反向代理](#使用反向代理)啟用 HTTPS。此時請將 `docker-compose.yml` 中的 `"5001:5001/tcp"` 改為 `"127.0.0.1:5001:5001/tcp"`，以防止未加密連接埠被直接存取。當伺服器可從公網存取時，請在 `env` 檔案中設定 `DOCLING_API_KEY`。
+**注：** 如需面向公網部署，強烈建議使用[反向代理](#使用反向代理)啟用 HTTPS。此時請將 `docker-compose.yml` 中的 `"5001:5001/tcp"` 改為 `"127.0.0.1:5001:5001/tcp"`，以防止未加密連接埠被直接存取。
 
 ## API 參考
 
@@ -404,7 +403,7 @@ docker exec docling docling_manage --version
 
 如果你的 Docling 伺服器可從公用網際網路存取 —— 即使只是短暫可達 —— 也請至少採取以下保護措施。Docling 接受上傳的文件並進行 CPU/GPU 密集型解析，未做防護的介面可能遭受資源濫用和資料洩露。
 
-**1. 設定 API 金鑰。** 產生一個強隨機金鑰並在 `env` 檔案中設定 `DOCLING_API_KEY`。之後所有轉換和分塊 API 請求必須包含 `X-Api-Key: <key>` 標頭。健康檢查、版本和文件端點無需金鑰即可存取。
+**1. 使用 API 金鑰。** 掛載 `/var/lib/docling` 資料卷的新安裝會自動產生 API 金鑰。可用 `docker exec docling docling_manage --showkey` 查看；腳本中可用 `docker exec docling docling_manage --getkey`。沒有金鑰的既有安裝會保持開放以相容舊行為；也可以在 `env` 檔案中設定 `DOCLING_API_KEY` 手動啟用驗證。轉換和分塊 API 請求必須包含 `X-Api-Key: <key>`。健康檢查、版本和文件端點無需金鑰即可存取。
 
 ```bash
 # 產生 32 位元組的隨機金鑰
@@ -459,8 +458,6 @@ server {
     }
 }
 ```
-
-如伺服器對公網開放，請在 `env` 檔案中設定 `DOCLING_API_KEY`。
 
 ## 更新 Docker 映像
 

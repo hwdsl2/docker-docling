@@ -51,7 +51,7 @@ docker run \
     -d hwdsl2/docling-server
 ```
 
-**注：** 如需面向互联网的部署，**强烈建议**使用[反向代理](#使用反向代理)来添加 HTTPS。此时，还应将上述 `docker run` 命令中的 `-p 5001:5001` 替换为 `-p 127.0.0.1:5001:5001`，以防止从外部直接访问未加密端口。当服务器可从公网访问时，请在 `env` 文件中设置 `DOCLING_API_KEY`。
+**注：** 如需面向互联网的部署，**强烈建议**使用[反向代理](#使用反向代理)来添加 HTTPS。此时，还应将上述 `docker run` 命令中的 `-p 5001:5001` 替换为 `-p 127.0.0.1:5001:5001`，以防止从外部直接访问未加密端口。
 
 <details>
 <summary><strong>使用 docker-compose 配合 GPU（NVIDIA CUDA）</strong></summary>
@@ -170,14 +170,14 @@ docker pull hwdsl2/docling-server:cuda
 
 ## 环境变量
 
-所有变量均为可选。设置 `DOCLING_API_KEY` 可启用 API 密钥认证。
+所有变量均为可选。挂载 `/var/lib/docling` 数据卷的新安装会自动生成 API 密钥。没有密钥的既有安装会保持开放以兼容旧行为。
 
 此 Docker 镜像使用以下变量，可在 `env` 文件中声明（参见[示例](docling.env.example)）：
 
 | 变量 | 说明 | 默认值 |
 |---|---|---|
 | `DOCLING_PORT` | API 的 HTTP 端口（1–65535）。 | `5001` |
-| `DOCLING_API_KEY` | 可选的 API 密钥。设置后，转换/分块 API 请求须包含 `X-Api-Key: <key>` 头。健康检查和版本端点不需要密钥。 | *（未设置）* |
+| `DOCLING_API_KEY` | 可选的 API 密钥。新持久化安装会自动生成。设置后，转换/分块 API 请求须包含 `X-Api-Key: <key>` 头。健康检查和版本端点不需要密钥。显式设置为空可禁用认证。 | 新持久化安装自动生成 |
 | `DOCLING_LOG_LEVEL` | 日志级别：`DEBUG`、`INFO`、`WARNING`、`ERROR`。 | `INFO` |
 | `DOCLING_WORKERS` | Uvicorn 工作进程数。在多核系统上增加可提高吞吐量。每个工作进程独立加载模型（更高内存）。 | `1` |
 | `DOCLING_ENABLE_UI` | 在 `/ui` 启用 Web UI 演示界面。设为 `true` 或 `false`。 | `false` |
@@ -247,7 +247,7 @@ volumes:
     name: docling-data
 ```
 
-**注：** 如需面向公网部署，强烈建议使用[反向代理](#使用反向代理)启用 HTTPS。此时请将 `docker-compose.yml` 中的 `"5001:5001/tcp"` 改为 `"127.0.0.1:5001:5001/tcp"`，以防止未加密端口被直接访问。当服务器可从公网访问时，请在 `env` 文件中设置 `DOCLING_API_KEY`。
+**注：** 如需面向公网部署，强烈建议使用[反向代理](#使用反向代理)启用 HTTPS。此时请将 `docker-compose.yml` 中的 `"5001:5001/tcp"` 改为 `"127.0.0.1:5001:5001/tcp"`，以防止未加密端口被直接访问。
 
 ## API 参考
 
@@ -404,7 +404,7 @@ docker exec docling docling_manage --version
 
 如果你的 Docling 服务器可从公网访问 —— 即使只是短暂可达 —— 也请至少采取以下保护措施。Docling 接受上传的文档并进行 CPU/GPU 密集型解析，未做防护的接口可能遭受资源滥用和数据泄露。
 
-**1. 设置 API 密钥。** 生成一个强随机密钥并在 `env` 文件中设置 `DOCLING_API_KEY`。之后所有转换和分块 API 请求必须包含 `X-Api-Key: <key>` 头。健康检查、版本和文档端点无需密钥即可访问。
+**1. 使用 API 密钥。** 挂载 `/var/lib/docling` 数据卷的新安装会自动生成 API 密钥。可用 `docker exec docling docling_manage --showkey` 查看；脚本中可用 `docker exec docling docling_manage --getkey`。没有密钥的既有安装会保持开放以兼容旧行为；也可以在 `env` 文件中设置 `DOCLING_API_KEY` 手动启用认证。转换和分块 API 请求必须包含 `X-Api-Key: <key>`。健康检查、版本和文档端点无需密钥即可访问。
 
 ```bash
 # 生成 32 字节的随机密钥
@@ -459,8 +459,6 @@ server {
     }
 }
 ```
-
-如服务器对公网开放，请在 `env` 文件中设置 `DOCLING_API_KEY`。
 
 ## 更新 Docker 镜像
 

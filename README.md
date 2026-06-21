@@ -51,7 +51,7 @@ docker run \
     -d hwdsl2/docling-server
 ```
 
-**Note:** For internet-facing deployments, using a [reverse proxy](#using-a-reverse-proxy) to add HTTPS is **strongly recommended**. In that case, also replace `-p 5001:5001` with `-p 127.0.0.1:5001:5001` in the `docker run` command above, to prevent direct access to the unencrypted port. Set `DOCLING_API_KEY` in your `env` file when the server is accessible from the public internet.
+**Note:** For internet-facing deployments, using a [reverse proxy](#using-a-reverse-proxy) to add HTTPS is **strongly recommended**. In that case, also replace `-p 5001:5001` with `-p 127.0.0.1:5001:5001` in the `docker run` command above, to prevent direct access to the unencrypted port.
 
 <details>
 <summary><strong>Using docker-compose with GPU (NVIDIA CUDA)</strong></summary>
@@ -170,14 +170,14 @@ Supported platforms: `linux/amd64` and `linux/arm64`. The `:cuda` tag supports `
 
 ## Environment variables
 
-All variables are optional. Set `DOCLING_API_KEY` to enable API key authentication.
+All variables are optional. Fresh installs with a mounted `/var/lib/docling` volume auto-generate an API key. Existing installs without a key remain open for backward compatibility.
 
 This Docker image uses the following variables, that can be declared in an `env` file (see [example](docling.env.example)):
 
 | Variable | Description | Default |
 |---|---|---|
 | `DOCLING_PORT` | HTTP port for the API (1–65535). | `5001` |
-| `DOCLING_API_KEY` | Optional API key. If set, conversion/chunk API requests must include `X-Api-Key: <key>` header. Health and version endpoints do not require the key. | *(not set)* |
+| `DOCLING_API_KEY` | Optional API key. Fresh persistent installs auto-generate one. If set, conversion/chunk API requests must include `X-Api-Key: <key>` header. Health and version endpoints do not require the key. Set explicitly empty to disable authentication. | Auto-generated for fresh persistent installs |
 | `DOCLING_LOG_LEVEL` | Log level: `DEBUG`, `INFO`, `WARNING`, `ERROR`. | `INFO` |
 | `DOCLING_WORKERS` | Number of Uvicorn workers. Increase for higher throughput on multi-core systems. Each worker loads models independently (higher RAM). | `1` |
 | `DOCLING_ENABLE_UI` | Enable the web UI playground at `/ui`. Set to `true` or `false`. | `false` |
@@ -247,7 +247,7 @@ volumes:
     name: docling-data
 ```
 
-**Note:** For internet-facing deployments, using a [reverse proxy](#using-a-reverse-proxy) to add HTTPS is **strongly recommended**. In that case, also change `"5001:5001/tcp"` to `"127.0.0.1:5001:5001/tcp"` in `docker-compose.yml`, to prevent direct access to the unencrypted port. Set `DOCLING_API_KEY` in your `env` file when the server is accessible from the public internet.
+**Note:** For internet-facing deployments, using a [reverse proxy](#using-a-reverse-proxy) to add HTTPS is **strongly recommended**. In that case, also change `"5001:5001/tcp"` to `"127.0.0.1:5001:5001/tcp"` in `docker-compose.yml`, to prevent direct access to the unencrypted port.
 
 ## API reference
 
@@ -404,7 +404,7 @@ Output format is controlled per-request via the API. See the interactive API doc
 
 If your Docling server is reachable from the public internet — even briefly — apply at minimum these protections. Docling accepts uploaded documents and performs CPU/GPU-intensive parsing, making an unprotected endpoint a target for resource abuse and data leakage.
 
-**1. Set an API key.** Generate a strong random key and set `DOCLING_API_KEY` in your `env` file. All conversion and chunking API requests must then include `X-Api-Key: <key>`. Health, version, and documentation endpoints remain accessible without the key.
+**1. Use an API key.** Fresh installs with a mounted `/var/lib/docling` volume auto-generate an API key. Display it with `docker exec docling docling_manage --showkey`, or use `docker exec docling docling_manage --getkey` in scripts. Existing installs without a key remain open for backward compatibility; set `DOCLING_API_KEY` in your `env` file to enable authentication manually. Conversion and chunking API requests must include `X-Api-Key: <key>`. Health, version, and documentation endpoints remain accessible without the key.
 
 ```bash
 # Generate a 32-byte random key
@@ -459,8 +459,6 @@ server {
     }
 }
 ```
-
-Set `DOCLING_API_KEY` in your `env` file when the server is accessible from the public internet.
 
 ## Update Docker image
 
