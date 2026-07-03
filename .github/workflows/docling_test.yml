@@ -2,6 +2,9 @@ name: docling_test
 
 on: workflow_call
 
+permissions:
+  contents: read
+
 jobs:
   docling_test:
     runs-on: ubuntu-24.04
