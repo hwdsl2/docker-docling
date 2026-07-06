@@ -27,6 +27,11 @@ jobs:
       || needs.check_update_cuda.outputs.should_test == 'true'
     uses: ./.github/workflows/docling_test.yml
 
+  cuda_test:
+    needs: [check_update_cuda, docling_test]
+    if: needs.check_update_cuda.outputs.should_update == 'true'
+    uses: ./.github/workflows/cuda_test.yml
+
   buildx:
     needs: [check_update, docling_test]
     if: needs.check_update.outputs.should_update == 'true'
@@ -39,7 +44,7 @@ jobs:
       BUILD_ONLY: ${{ secrets.BUILD_ONLY }}
 
   buildx-cuda:
-    needs: [check_update_cuda, docling_test]
+    needs: [check_update_cuda, docling_test, cuda_test]
     if: needs.check_update_cuda.outputs.should_update == 'true'
     uses: ./.github/workflows/buildx-cuda.yml
     secrets:

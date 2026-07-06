@@ -1,0 +1,75 @@
+name: cuda_test
+
+on: workflow_call
+
+permissions:
+  contents: read
+
+jobs:
+  cuda_test:
+    runs-on: ubuntu-24.04
+    if: github.repository_owner == 'hwdsl2'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Test CUDA image boot without GPU
+        run: |
+          [ ! -x /usr/bin/docker ] && exit 1
+
+          cd "$GITHUB_WORKSPACE"
+          pwd
+
+          set -x
+
+          docker build -f Dockerfile.cuda -t docling-cuda-test .
+
+          docker run \
+            --name docling-cuda-runtime-test \
+            --restart=always \
+            -v docling-cuda-runtime-test-data:/var/lib/docling \
+            -e DOCLING_DEVICE=cpu \
+            -e DOCLING_API_KEY=test-docling-cuda-key \
+            -p 5001:5001/tcp \
+            -d docling-cuda-test
+
+          # Wait for server to be ready (up to 600 seconds for model loading)
+          i=0
+          while [ "$i" -lt 600 ]; do
+            if docker exec docling-cuda-runtime-test curl -sf http://127.0.0.1:5001/ready >/dev/null 2>&1; then
+              break
+            fi
+            sleep 1
+            i=$((i + 1))
+          done
+
+          docker ps | grep docling-cuda-runtime-test
+          docker logs docling-cuda-runtime-test
+
+          # Verify the CUDA image can boot on a non-GPU runner in explicit CPU mode.
+          docker logs docling-cuda-runtime-test 2>&1 | grep -Eq 'Device:[[:space:]]+cpu'
+
+          # Verify health and readiness endpoints.
+          docker exec docling-cuda-runtime-test curl -sf http://127.0.0.1:5001/health
+          docker exec docling-cuda-runtime-test curl -sf http://127.0.0.1:5001/ready
+          curl -sf http://127.0.0.1:5001/version | grep -q "docling"
+
+          # Verify auth enforcement on a protected endpoint.
+          http_code=$(curl -s -o /dev/null -w '%{http_code}' \
+            -X POST http://127.0.0.1:5001/v1/convert/source \
+            -H "Content-Type: application/json" \
+            -d '{"sources": [{"kind": "http", "url": "https://example.com/test.pdf"}]}' \
+            2>/dev/null || true)
+          [ "$http_code" = "401" ] || [ "$http_code" = "403" ] || { echo "Expected 401/403 without key, got $http_code"; exit 1; }
+
+          docker exec docling-cuda-runtime-test docling_manage --showinfo
+          docker exec docling-cuda-runtime-test docling_manage --showformats
+          docker exec docling-cuda-runtime-test docling_manage --version
+
+          exit 0
+      - name: Clear
+        if: always()
+        run: |
+          docker rm -f docling-cuda-runtime-test || true
+          docker volume rm docling-cuda-runtime-test-data || true
+          docker rmi docling-cuda-test || true
