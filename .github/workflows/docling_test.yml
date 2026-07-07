@@ -105,6 +105,17 @@ jobs:
           # Verify ready endpoint
           docker exec "$TEST_ID" curl -sf http://127.0.0.1:5001/ready
 
+          cat > /tmp/docling-test.html <<'EOF'
+          <!doctype html>
+          <html>
+            <head><title>Docling CI</title></head>
+            <body>
+              <h1>Docling CI</h1>
+              <p>This local document verifies offline conversion.</p>
+            </body>
+          </html>
+          EOF
+
           # Build optional auth header args
           docling_curl_args=()
           if [ "$TEST_ID" = "with-key" ]; then
@@ -124,17 +135,16 @@ jobs:
           if [ "${#docling_curl_args[@]}" -gt 0 ]; then
             # Test auth enforcement when DOCLING_API_KEY is set/generated
             http_code=$(curl -s -o /dev/null -w '%{http_code}' \
-              -X POST http://127.0.0.1:5001/v1/convert/source \
-              -H "Content-Type: application/json" \
-              -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}' \
+              -X POST http://127.0.0.1:5001/v1/convert/file \
+              -F "files=@/tmp/docling-test.html;type=text/html" \
               2>/dev/null || true)
             [ "$http_code" = "401" ] || [ "$http_code" = "403" ] || { echo "Expected 401/403 without key, got $http_code"; exit 1; }
           else
             # Explicit empty keys and existing no-key volumes preserve no-auth behavior.
             http_code=$(curl -s -o /dev/null -w '%{http_code}' \
-              -X POST http://127.0.0.1:5001/v1/convert/source \
-              -H "Content-Type: application/json" \
-              -d '{}' 2>/dev/null || true)
+              -X POST http://127.0.0.1:5001/v1/convert/file \
+              -F "files=@/tmp/docling-test.html;type=text/html" \
+              2>/dev/null || true)
             [ "$http_code" != "401" ] && [ "$http_code" != "403" ] || { echo "Expected no auth, got $http_code"; exit 1; }
           fi
 
@@ -146,11 +156,10 @@ jobs:
           docker exec "$TEST_ID" docling_manage --showformats
           docker exec "$TEST_ID" docling_manage --version
 
-          # Test document conversion from URL
-          curl -sf http://127.0.0.1:5001/v1/convert/source \
+          # Test local document conversion
+          curl -sf -X POST http://127.0.0.1:5001/v1/convert/file \
             "${docling_curl_args[@]}" \
-            -H "Content-Type: application/json" \
-            -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}' \
+            -F "files=@/tmp/docling-test.html;type=text/html" \
             | grep -q "document"
 
           docker restart "$TEST_ID"

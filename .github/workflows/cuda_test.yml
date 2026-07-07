@@ -54,11 +54,21 @@ jobs:
           docker exec docling-cuda-runtime-test curl -sf http://127.0.0.1:5001/ready
           curl -sf http://127.0.0.1:5001/version | grep -q "docling"
 
+          cat > /tmp/docling-cuda-test.html <<'EOF'
+          <!doctype html>
+          <html>
+            <head><title>Docling CUDA CI</title></head>
+            <body>
+              <h1>Docling CUDA CI</h1>
+              <p>This local document verifies protected conversion endpoints.</p>
+            </body>
+          </html>
+          EOF
+
           # Verify auth enforcement on a protected endpoint.
           http_code=$(curl -s -o /dev/null -w '%{http_code}' \
-            -X POST http://127.0.0.1:5001/v1/convert/source \
-            -H "Content-Type: application/json" \
-            -d '{"sources": [{"kind": "http", "url": "https://example.com/test.pdf"}]}' \
+            -X POST http://127.0.0.1:5001/v1/convert/file \
+            -F "files=@/tmp/docling-cuda-test.html;type=text/html" \
             2>/dev/null || true)
           [ "$http_code" = "401" ] || [ "$http_code" = "403" ] || { echo "Expected 401/403 without key, got $http_code"; exit 1; }
 
