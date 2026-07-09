@@ -192,6 +192,7 @@ docker pull hwdsl2/docling-server:cuda
 | `DOCLING_MAX_FILE_SIZE` | 上传文件的最大大小（字节），如 `50000000` 表示约 50 MB。 | *（无限制）* |
 | `DOCLING_DEVICE` | 计算设备：`cpu`、`cuda` 或 `auto`。 | `cpu` |
 | `DOCLING_LOCAL_ONLY` | 设为任意非空值（如 `true`）时，禁止所有 HuggingFace 模型下载。适用于离线或隔离网络部署。 | *（未设置）* |
+| `DOCLING_DISABLE_USAGE_COUNTS` | 设为 `1` 可禁用匿名聚合使用计数。 | *（未设置）* |
 
 **注：** 在 `env` 文件中，值可用单引号括起，例如 `VAR='value'`。`=` 两侧不要有空格。如更改 `DOCLING_PORT`，请相应更新 `docker run` 命令中的 `-p` 参数。
 
@@ -495,6 +496,10 @@ docker rm -f docling
 Docling 可作为更广泛的自托管 AI 设置中的文档转换服务。
 
 如需完整和轻量级 Docker Compose 技术栈、手动 `docker run` 示例，以及结合 Kokoro、Embeddings、LiteLLM、Ollama、Docling 和 MCP Gateway 的语音/RAG/MCP 流水线示例，请参阅 [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh.md)。
+
+## 使用计数
+
+此镜像使用公开的 GitHub Release 资源下载次数进行匿名聚合使用计数。计数是近似值，不代表唯一用户或活跃安装。镜像不会发送遥测负载，也不会使用私有收集器。仅当服务器成功启动且挂载了 `/var/lib/docling` 卷后，才会以尽力而为方式计数；当该持久化安装首次运行不同镜像构建时，也会再次计数。要退出，请设置 `DOCLING_DISABLE_USAGE_COUNTS=1`。
 
 ## 技术细节
 
