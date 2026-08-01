@@ -19,7 +19,7 @@
 - 文件資料留在您的伺服器上，不傳送給第三方
 - NVIDIA GPU (CUDA) 加速推論（使用 `:cuda` 映像標籤）
 - 離線/隔離網路模式 — 使用預先快取的模型無需網際網路連線 (`DOCLING_LOCAL_ONLY`)
-- 透過 [GitHub Actions](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml) 自動建置並發布
+- 透過 [GitHub Actions](https://github.com/hwdsl2/docker-docling/actions) 自動建置並發布
 - 透過 Docker 資料卷持久化資料
 - 支援平台：`linux/amd64`、`linux/arm64`
 

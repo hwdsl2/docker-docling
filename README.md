@@ -19,7 +19,7 @@ Docker image to run a self-hosted document parsing server, powered by [IBM Docli
 - Document data stays on your server — no data sent to third parties
 - NVIDIA GPU (CUDA) acceleration for faster inference (`:cuda` image tag)
 - Offline/air-gapped mode — run without internet access using pre-cached models (`DOCLING_LOCAL_ONLY`)
-- Automatically built and published via [GitHub Actions](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml)
+- Automatically built and published via [GitHub Actions](https://github.com/hwdsl2/docker-docling/actions)
 - Persistent data via a Docker volume
 - Supported platforms: `linux/amd64`, `linux/arm64`
 
