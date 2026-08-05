@@ -22,11 +22,17 @@ jobs:
 
           set -x
 
-          docker build -f Dockerfile.cuda -t docling-cuda-test .
+          docker build \
+            -f Dockerfile.cuda \
+            --build-arg BUILD_DATE=ci-test \
+            --build-arg VERSION=cuda \
+            -t docling-cuda-test \
+            .
 
           docker run \
             --name docling-cuda-runtime-test \
             --restart=always \
+            -e DOCLING_DISABLE_USAGE_COUNTS=1 \
             -v docling-cuda-runtime-test-data:/var/lib/docling \
             -e DOCLING_DEVICE=cpu \
             -e DOCLING_API_KEY=test-docling-cuda-key \

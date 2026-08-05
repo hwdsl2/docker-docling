@@ -47,6 +47,7 @@ jobs:
             docker run \
               --name "$TEST_ID" \
               --restart=always \
+              -e DOCLING_DISABLE_USAGE_COUNTS=1 \
               -v docling-test-data:/var/lib/docling \
               -v ./docling.env.example:/docling.env:ro \
               -p 5001:5001/tcp \
@@ -55,6 +56,7 @@ jobs:
             docker run \
               --name "$TEST_ID" \
               --restart=always \
+              -e DOCLING_DISABLE_USAGE_COUNTS=1 \
               -v docling-test-data:/var/lib/docling \
               -p 5001:5001/tcp \
               -d docling-test
@@ -62,6 +64,7 @@ jobs:
             docker run \
               --name "$TEST_ID" \
               --restart=always \
+              -e DOCLING_DISABLE_USAGE_COUNTS=1 \
               -v docling-test-data:/var/lib/docling \
               -e DOCLING_API_KEY=test-docling-key \
               -p 5001:5001/tcp \
@@ -70,6 +73,7 @@ jobs:
             docker run \
               --name "$TEST_ID" \
               --restart=always \
+              -e DOCLING_DISABLE_USAGE_COUNTS=1 \
               -v docling-test-data:/var/lib/docling \
               -e DOCLING_API_KEY= \
               -p 5001:5001/tcp \
@@ -78,6 +82,7 @@ jobs:
             docker run \
               --name "$TEST_ID" \
               --restart=always \
+              -e DOCLING_DISABLE_USAGE_COUNTS=1 \
               -v docling-test-data:/var/lib/docling \
               -p 5001:5001/tcp \
               -d docling-test
