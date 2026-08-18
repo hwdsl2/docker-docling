@@ -8,6 +8,8 @@
 
 Docker-образ для запуска самостоятельно размещённого сервера парсинга документов на базе [IBM Docling](https://github.com/docling-project/docling). Конвертирует PDF, DOCX, PPTX, XLSX, HTML, Markdown, LaTeX и другие форматы в структурированный Markdown, JSON или HTML. Простой, приватный, для самостоятельного развёртывания.
 
+> 📘 **Новая книга:** [The Self-Hosted AI Builder’s Guide](https://books2read.com/aiguide?store=amazon) — узнайте, как развернуть этот сервис в составе полного приватного AI-стека с безопасными настройками по умолчанию.
+
 **Возможности:**
 
 - API конвертации документов — преобразование PDF, DOCX, PPTX, HTML и других форматов в Markdown/JSON
@@ -25,7 +27,6 @@ Docker-образ для запуска самостоятельно разме�
 
 **Также доступно:**
 
-- **Новая книга:** [The Self-Hosted AI Builder’s Guide](https://books2read.com/aiguide?store=amazon) — разверните этот сервис в составе безопасного и полного приватного AI-стека
 - Связанные AI-сервисы: [Whisper](https://github.com/hwdsl2/docker-whisper/blob/main/README-ru.md), [Kokoro](https://github.com/hwdsl2/docker-kokoro/blob/main/README-ru.md), [Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-ru.md), [LiteLLM](https://github.com/hwdsl2/docker-litellm/blob/main/README-ru.md), [Ollama](https://github.com/hwdsl2/docker-ollama/blob/main/README-ru.md), [MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway/blob/main/README-ru.md)
 
 ## Сообщество

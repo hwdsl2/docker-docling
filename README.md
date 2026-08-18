@@ -8,6 +8,8 @@ Part of the [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stac
 
 Docker image to run a self-hosted document parsing server, powered by [IBM Docling](https://github.com/docling-project/docling). Converts PDF, DOCX, PPTX, XLSX, HTML, Markdown, LaTeX, and more to structured Markdown, JSON, or HTML output. Designed to be simple, private, and self-hosted.
 
+> 📘 **New book:** [The Self-Hosted AI Builder’s Guide](https://books2read.com/aiguide?store=amazon) — learn how to deploy this service as part of a complete, secure-by-default private AI stack.
+
 **Features:**
 
 - Document-to-text conversion API — convert PDF, DOCX, PPTX, HTML, and more to Markdown/JSON
@@ -25,7 +27,6 @@ Docker image to run a self-hosted document parsing server, powered by [IBM Docli
 
 **Also available:**
 
-- **New book:** [The Self-Hosted AI Builder’s Guide](https://books2read.com/aiguide?store=amazon) — deploy this service as part of a secure, complete private AI stack
 - Related AI services: [Whisper](https://github.com/hwdsl2/docker-whisper), [Kokoro](https://github.com/hwdsl2/docker-kokoro), [Embeddings](https://github.com/hwdsl2/docker-embeddings), [LiteLLM](https://github.com/hwdsl2/docker-litellm), [Ollama](https://github.com/hwdsl2/docker-ollama), [MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway)
 
 ## Community
