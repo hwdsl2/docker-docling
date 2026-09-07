@@ -13,7 +13,8 @@ WORKDIR /opt/src
 
 # Install curl for health checks and public IP lookup.
 # Base image is CentOS Stream 9 (sclorg/python-312-c9s) — uses dnf.
-RUN dnf swap -y curl-minimal curl --allowerasing \
+RUN dnf install -y ca-certificates \
+    && dnf swap -y curl-minimal curl --allowerasing \
     && dnf clean all \
     && rm -rf /var/cache/dnf \
     && mkdir -p /var/lib/docling \
