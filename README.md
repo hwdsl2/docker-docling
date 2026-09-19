@@ -42,7 +42,8 @@ docker run \
     -d hwdsl2/docling-server
 ```
 
-**Note:** For internet-facing deployments, using a [reverse proxy](#using-a-reverse-proxy) to add HTTPS is **strongly recommended**. In that case, also replace `-p 5001:5001` with `-p 127.0.0.1:5001:5001` in the `docker run` command above, to prevent direct access to the unencrypted port.
+> [!NOTE]
+> For internet-facing deployments, use a [reverse proxy](#using-a-reverse-proxy) to add HTTPS. Also replace `-p 5001:5001` with `-p 127.0.0.1:5001:5001` in the `docker run` command above, to prevent direct access to the unencrypted port.
 
 <details>
 <summary><strong>Using docker-compose with GPU (NVIDIA CUDA)</strong></summary>
@@ -256,7 +257,8 @@ volumes:
     name: docling-data
 ```
 
-**Note:** For internet-facing deployments, using a [reverse proxy](#using-a-reverse-proxy) to add HTTPS is **strongly recommended**. In that case, also change `"5001:5001/tcp"` to `"127.0.0.1:5001:5001/tcp"` in `docker-compose.yml`, to prevent direct access to the unencrypted port.
+> [!NOTE]
+> For internet-facing deployments, use a [reverse proxy](#using-a-reverse-proxy) to add HTTPS. Also change `"5001:5001/tcp"` to `"127.0.0.1:5001:5001/tcp"` in `docker-compose.yml`, to prevent direct access to the unencrypted port.
 
 ## API reference
 
