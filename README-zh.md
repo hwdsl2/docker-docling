@@ -27,7 +27,7 @@
 
 **另提供：**
 
-- 相关 AI 服务：[Whisper](https://github.com/hwdsl2/docker-whisper/blob/main/README-zh.md)、[Kokoro](https://github.com/hwdsl2/docker-kokoro/blob/main/README-zh.md)、[Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-zh.md)、[LiteLLM](https://github.com/hwdsl2/docker-litellm/blob/main/README-zh.md)、[Ollama](https://github.com/hwdsl2/docker-ollama/blob/main/README-zh.md)、[MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway/blob/main/README-zh.md)
+- 相关 AI 服务：[ScribeCrate](https://github.com/hwdsl2/scribecrate/blob/main/README-zh.md)、[Kokoro](https://github.com/hwdsl2/docker-kokoro/blob/main/README-zh.md)、[Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-zh.md)、[LiteLLM](https://github.com/hwdsl2/docker-litellm/blob/main/README-zh.md)、[Ollama](https://github.com/hwdsl2/docker-ollama/blob/main/README-zh.md)、[MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway/blob/main/README-zh.md)
 
 ## 快速开始
 
@@ -114,8 +114,15 @@ docker logs docling
 
 看到 "Docling document parsing server is ready" 后，转换您的第一个文档：
 
+新的持久化安装需要 API 密钥。获取密钥以用于以下示例：
+
+```bash
+docling_api_key="$(docker exec docling docling_manage --getkey)"
+```
+
 ```bash
 curl -X POST http://您的服务器IP:5001/v1/convert/source \
+    -H "X-Api-Key: $docling_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -262,6 +269,14 @@ volumes:
 
 ## API 参考
 
+新的持久化安装需要 API 密钥。获取密钥以用于以下示例：
+
+```bash
+docling_api_key="$(docker exec docling docling_manage --getkey)"
+```
+
+如果已禁用 API 密钥认证，请省略 `X-Api-Key` 请求头。
+
 ### 通过 URL 转换文档
 
 ```
@@ -279,6 +294,7 @@ Content-Type: application/json
 
 ```bash
 curl -X POST http://您的服务器IP:5001/v1/convert/source \
+    -H "X-Api-Key: $docling_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -287,7 +303,7 @@ curl -X POST http://您的服务器IP:5001/v1/convert/source \
 
 ```bash
 curl -X POST http://您的服务器IP:5001/v1/convert/source \
-    -H "X-Api-Key: your_api_key" \
+    -H "X-Api-Key: $docling_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -303,6 +319,7 @@ Content-Type: multipart/form-data
 
 ```bash
 curl -X POST http://您的服务器IP:5001/v1/convert/file \
+    -H "X-Api-Key: $docling_api_key" \
     -F "files=@document.pdf"
 ```
 

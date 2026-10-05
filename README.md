@@ -27,7 +27,7 @@ Docker image to run a self-hosted document parsing server, powered by [IBM Docli
 
 **Also available:**
 
-- Related AI services: [Whisper](https://github.com/hwdsl2/docker-whisper), [Kokoro](https://github.com/hwdsl2/docker-kokoro), [Embeddings](https://github.com/hwdsl2/docker-embeddings), [LiteLLM](https://github.com/hwdsl2/docker-litellm), [Ollama](https://github.com/hwdsl2/docker-ollama), [MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway)
+- Related AI services: [ScribeCrate](https://github.com/hwdsl2/scribecrate), [Kokoro](https://github.com/hwdsl2/docker-kokoro), [Embeddings](https://github.com/hwdsl2/docker-embeddings), [LiteLLM](https://github.com/hwdsl2/docker-litellm), [Ollama](https://github.com/hwdsl2/docker-ollama), [MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway)
 
 ## Quick start
 
@@ -114,8 +114,15 @@ docker logs docling
 
 Once you see "Docling document parsing server is ready", convert your first document:
 
+Fresh persistent installations require an API key. Retrieve it for the following examples:
+
+```bash
+docling_api_key="$(docker exec docling docling_manage --getkey)"
+```
+
 ```bash
 curl -X POST http://your_server_ip:5001/v1/convert/source \
+    -H "X-Api-Key: $docling_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -262,6 +269,14 @@ volumes:
 
 ## API reference
 
+Fresh persistent installations require an API key. Retrieve it for the following examples:
+
+```bash
+docling_api_key="$(docker exec docling docling_manage --getkey)"
+```
+
+If API key authentication is disabled, omit the `X-Api-Key` header.
+
 ### Convert a document from URL
 
 ```
@@ -279,6 +294,7 @@ Content-Type: application/json
 
 ```bash
 curl -X POST http://your_server_ip:5001/v1/convert/source \
+    -H "X-Api-Key: $docling_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -287,7 +303,7 @@ With API key authentication:
 
 ```bash
 curl -X POST http://your_server_ip:5001/v1/convert/source \
-    -H "X-Api-Key: your_api_key" \
+    -H "X-Api-Key: $docling_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -303,6 +319,7 @@ Content-Type: multipart/form-data
 
 ```bash
 curl -X POST http://your_server_ip:5001/v1/convert/file \
+    -H "X-Api-Key: $docling_api_key" \
     -F "files=@document.pdf"
 ```
 

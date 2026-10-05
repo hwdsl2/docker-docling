@@ -27,7 +27,7 @@ Docker-образ для запуска самостоятельно разме�
 
 **Также доступно:**
 
-- Связанные AI-сервисы: [Whisper](https://github.com/hwdsl2/docker-whisper/blob/main/README-ru.md), [Kokoro](https://github.com/hwdsl2/docker-kokoro/blob/main/README-ru.md), [Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-ru.md), [LiteLLM](https://github.com/hwdsl2/docker-litellm/blob/main/README-ru.md), [Ollama](https://github.com/hwdsl2/docker-ollama/blob/main/README-ru.md), [MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway/blob/main/README-ru.md)
+- Связанные AI-сервисы: [ScribeCrate](https://github.com/hwdsl2/scribecrate/blob/main/README-ru.md), [Kokoro](https://github.com/hwdsl2/docker-kokoro/blob/main/README-ru.md), [Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-ru.md), [LiteLLM](https://github.com/hwdsl2/docker-litellm/blob/main/README-ru.md), [Ollama](https://github.com/hwdsl2/docker-ollama/blob/main/README-ru.md), [MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway/blob/main/README-ru.md)
 
 ## Быстрый старт
 
@@ -114,8 +114,15 @@ docker logs docling
 
 Когда вы увидите "Docling document parsing server is ready", конвертируйте ваш первый документ:
 
+Новые установки с постоянным томом требуют API-ключ. Получите его для следующих примеров:
+
+```bash
+docling_api_key="$(docker exec docling docling_manage --getkey)"
+```
+
 ```bash
 curl -X POST http://IP_вашего_сервера:5001/v1/convert/source \
+    -H "X-Api-Key: $docling_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -261,6 +268,14 @@ volumes:
 
 ## Справочник API
 
+Новые установки с постоянным томом требуют API-ключ. Получите его для следующих примеров:
+
+```bash
+docling_api_key="$(docker exec docling docling_manage --getkey)"
+```
+
+Если аутентификация по API-ключу отключена, опустите заголовок `X-Api-Key`.
+
 ### Конвертация документа по URL
 
 ```
@@ -278,6 +293,7 @@ Content-Type: application/json
 
 ```bash
 curl -X POST http://IP_вашего_сервера:5001/v1/convert/source \
+    -H "X-Api-Key: $docling_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -286,7 +302,7 @@ curl -X POST http://IP_вашего_сервера:5001/v1/convert/source \
 
 ```bash
 curl -X POST http://IP_вашего_сервера:5001/v1/convert/source \
-    -H "X-Api-Key: your_api_key" \
+    -H "X-Api-Key: $docling_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -302,6 +318,7 @@ Content-Type: multipart/form-data
 
 ```bash
 curl -X POST http://IP_вашего_сервера:5001/v1/convert/file \
+    -H "X-Api-Key: $docling_api_key" \
     -F "files=@document.pdf"
 ```
 
