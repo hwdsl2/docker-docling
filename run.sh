@@ -379,12 +379,15 @@ echo "==========================================================="
 echo
 echo "Convert a document (from URL):"
 echo "  curl -X POST http://${server_addr}:${DOCLING_PORT}/v1/convert/source \\"
+if [ -n "$DOCLING_API_KEY" ]; then
+  echo "    -H \"X-Api-Key: <api-key>\" \\"
+fi
 echo "    -H 'Content-Type: application/json' \\"
 echo "    -d '{\"sources\": [{\"kind\": \"http\", \"url\": \"https://arxiv.org/pdf/2501.17887\"}]}'"
 echo
 if [ -n "$DOCLING_API_KEY" ]; then
   echo "API key authentication is enabled."
-  echo "Include header:  -H \"X-Api-Key: \$DOCLING_API_KEY\""
+  echo "Replace <api-key> with the key from: docker exec <container> docling_manage --getkey"
   echo
 fi
 echo "Interactive API docs: http://${server_addr}:${DOCLING_PORT}/docs"
