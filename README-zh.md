@@ -4,24 +4,21 @@
 
 [![构建状态](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-docling-server.svg)](https://hub.docker.com/r/hwdsl2/docling-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
 
-[Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh.md) 的一部分 ─ 一条命令部署完整的自托管 AI 技术栈。
-
 使用 [IBM Docling](https://github.com/docling-project/docling) 在 Docker 容器中运行文档解析服务器。将 PDF、DOCX、PPTX、XLSX、HTML、Markdown、LaTeX 等格式转换为结构化的 Markdown、JSON 或 HTML 输出。简单、私密、可自托管。
 
 **功能特性：**
 
-- 文档转文本 API — 将 PDF、DOCX、PPTX、HTML 等转换为 Markdown/JSON
-- 由 [IBM Docling](https://github.com/docling-project/docling) 驱动 — 高精度的版面分析、OCR 和表格结构识别
-- 支持同步和异步转换，文件上传和基于 URL 的输入
-- 为 RAG 应用提供分块端点（分层分块和混合分块）
-- 可选的 Web UI 演示界面 (`DOCLING_ENABLE_UI`)
-- 通过辅助脚本 (`docling_manage`) 管理模型
-- 文档数据留在您的服务器上，不发送给第三方
-- NVIDIA GPU (CUDA) 加速推理（使用 `:cuda` 镜像标签）
-- 离线/隔离网络模式 — 使用预先缓存的模型无需互联网访问 (`DOCLING_LOCAL_ONLY`)
-- 通过 [GitHub Actions](https://github.com/hwdsl2/docker-docling/actions) 自动构建和发布
-- 通过 Docker 数据卷持久化数据
-- 支持平台：`linux/amd64`、`linux/arm64`
+- **文档转换 API：** 将 PDF、DOCX、PPTX、HTML 等转换为 Markdown/JSON
+- **私密的本地处理：** 文档数据留在您的服务器上，不发送给第三方
+- **布局、OCR 和表格识别：** 由 [IBM Docling](https://github.com/docling-project/docling) 驱动 — 高精度的版面分析、OCR 和表格结构识别
+- **灵活的输入和处理方式：** 支持同步和异步转换，文件上传和基于 URL 的输入
+- **RAG 分块：** 为 RAG 应用提供分块端点（分层分块和混合分块）
+- **Web 体验界面：** 可选的 Web UI 演示界面 (`DOCLING_ENABLE_UI`)
+- **CPU 和 GPU 支持：** 可在 CPU 上运行，或使用 `:cuda` 镜像启用 NVIDIA GPU 加速。
+- **离线运行：** 使用预先缓存的模型无需互联网访问 (`DOCLING_LOCAL_ONLY`)
+- **自动构建：** 通过 [GitHub Actions](https://github.com/hwdsl2/docker-docling/actions) 自动构建和发布
+
+也可作为 [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh.md) 的一部分使用，一条命令即可部署完整的自托管 AI 技术栈。
 
 > 📘 [The Self-Hosted AI Builder’s Guide](https://books2read.com/aiguide?store=amazon) 是一本关于构建、保护和运维自己的私有 AI 技术栈的实用指南。
 

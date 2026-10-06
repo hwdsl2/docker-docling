@@ -4,24 +4,21 @@
 
 [![Build Status](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-docling-server.svg)](https://hub.docker.com/r/hwdsl2/docling-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
 
-Part of the [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack) — deploy a complete self-hosted AI stack with a single command.
-
 Docker image to run a self-hosted document parsing server, powered by [IBM Docling](https://github.com/docling-project/docling). Converts PDF, DOCX, PPTX, XLSX, HTML, Markdown, LaTeX, and more to structured Markdown, JSON, or HTML output. Designed to be simple, private, and self-hosted.
 
 **Features:**
 
-- Document-to-text conversion API — convert PDF, DOCX, PPTX, HTML, and more to Markdown/JSON
-- Powered by [IBM Docling](https://github.com/docling-project/docling) — high-accuracy layout analysis, OCR, and table structure recognition
-- Supports sync and async conversion, file upload and URL-based input
-- Chunking endpoints for RAG applications (hierarchical and hybrid chunking)
-- Optional web UI playground (`DOCLING_ENABLE_UI`)
-- Model management via a helper script (`docling_manage`)
-- Document data stays on your server — no data sent to third parties
-- NVIDIA GPU (CUDA) acceleration for faster inference (`:cuda` image tag)
-- Offline/air-gapped mode — run without internet access using pre-cached models (`DOCLING_LOCAL_ONLY`)
-- Automatically built and published via [GitHub Actions](https://github.com/hwdsl2/docker-docling/actions)
-- Persistent data via a Docker volume
-- Supported platforms: `linux/amd64`, `linux/arm64`
+- **Document conversion API:** convert PDF, DOCX, PPTX, HTML, and more to Markdown/JSON.
+- **Private, local processing:** document data stays on your server and is not sent to third parties.
+- **Layout, OCR, and tables:** powered by [IBM Docling](https://github.com/docling-project/docling) for high-accuracy layout analysis, OCR, and table structure recognition.
+- **Flexible input and processing:** synchronous and asynchronous conversion with file uploads or URL-based input.
+- **RAG chunking:** hierarchical and hybrid chunking endpoints for RAG applications.
+- **Web playground:** optional web UI playground enabled with `DOCLING_ENABLE_UI`.
+- **CPU and GPU support:** run on CPU or use the `:cuda` image for NVIDIA GPU acceleration.
+- **Offline operation:** run without internet access using pre-cached models (`DOCLING_LOCAL_ONLY`).
+- **Automated builds:** images are automatically built and published through [GitHub Actions](https://github.com/hwdsl2/docker-docling/actions).
+
+Also available as part of the [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack), which deploys a complete self-hosted AI stack with a single command.
 
 > 📘 [The Self-Hosted AI Builder’s Guide](https://books2read.com/aiguide?store=amazon) is a practical guide to building, securing, and operating your own private AI stack.
 

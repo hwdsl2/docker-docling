@@ -4,24 +4,21 @@
 
 [![建置狀態](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-docling-server.svg)](https://hub.docker.com/r/hwdsl2/docling-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
 
-[Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh-Hant.md) 的一部分 ─ 一條命令部署完整的自託管 AI 技術棧。
-
 使用 [IBM Docling](https://github.com/docling-project/docling) 在 Docker 容器中執行文件解析伺服器。將 PDF、DOCX、PPTX、XLSX、HTML、Markdown、LaTeX 等格式轉換為結構化的 Markdown、JSON 或 HTML 輸出。簡單、私密、可自架。
 
 **功能特性：**
 
-- 文件轉文字 API — 將 PDF、DOCX、PPTX、HTML 等轉換為 Markdown/JSON
-- 由 [IBM Docling](https://github.com/docling-project/docling) 驅動 — 高精度的版面分析、OCR 和表格結構辨識
-- 支援同步和非同步轉換，檔案上傳和基於 URL 的輸入
-- 為 RAG 應用程式提供分塊端點（階層式分塊和混合分塊）
-- 可選的 Web UI 示範介面 (`DOCLING_ENABLE_UI`)
-- 透過輔助腳本 (`docling_manage`) 管理模型
-- 文件資料留在您的伺服器上，不傳送給第三方
-- NVIDIA GPU (CUDA) 加速推論（使用 `:cuda` 映像標籤）
-- 離線/隔離網路模式 — 使用預先快取的模型無需網際網路連線 (`DOCLING_LOCAL_ONLY`)
-- 透過 [GitHub Actions](https://github.com/hwdsl2/docker-docling/actions) 自動建置並發布
-- 透過 Docker 資料卷持久化資料
-- 支援平台：`linux/amd64`、`linux/arm64`
+- **文件轉換 API：** 將 PDF、DOCX、PPTX、HTML 等轉換為 Markdown/JSON
+- **私密的本地處理：** 文件資料留在您的伺服器上，不傳送給第三方
+- **版面、OCR 與表格辨識：** 由 [IBM Docling](https://github.com/docling-project/docling) 驅動 — 高精度的版面分析、OCR 和表格結構辨識
+- **彈性的輸入與處理方式：** 支援同步和非同步轉換，檔案上傳和基於 URL 的輸入
+- **RAG 分塊：** 為 RAG 應用程式提供分塊端點（階層式分塊和混合分塊）
+- **Web 體驗介面：** 可選的 Web UI 示範介面 (`DOCLING_ENABLE_UI`)
+- **CPU 與 GPU 支援：** 可在 CPU 上執行，或使用 `:cuda` 映像啟用 NVIDIA GPU 加速。
+- **離線執行：** 使用預先快取的模型無需網際網路連線 (`DOCLING_LOCAL_ONLY`)
+- **自動建置：** 透過 [GitHub Actions](https://github.com/hwdsl2/docker-docling/actions) 自動建置並發布
+
+也可作為 [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh-Hant.md) 的一部分使用，一條命令即可部署完整的自託管 AI 技術堆疊。
 
 > 📘 [The Self-Hosted AI Builder’s Guide](https://books2read.com/aiguide?store=amazon) 是一本關於建置、保護和維運自己的私有 AI 技術堆疊的實用指南。
 

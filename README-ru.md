@@ -4,24 +4,21 @@
 
 [![Статус сборки](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-docling-server.svg)](https://hub.docker.com/r/hwdsl2/docling-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
 
-Часть [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-ru.md) — разверните полный самостоятельно размещённый AI-стек одной командой.
-
 Docker-образ для запуска самостоятельно размещённого сервера парсинга документов на базе [IBM Docling](https://github.com/docling-project/docling). Конвертирует PDF, DOCX, PPTX, XLSX, HTML, Markdown, LaTeX и другие форматы в структурированный Markdown, JSON или HTML. Простой, приватный, для самостоятельного развёртывания.
 
 **Возможности:**
 
-- API конвертации документов — преобразование PDF, DOCX, PPTX, HTML и других форматов в Markdown/JSON
-- На базе [IBM Docling](https://github.com/docling-project/docling) — высокоточный анализ макета, OCR и распознавание структуры таблиц
-- Поддержка синхронной и асинхронной конвертации, загрузки файлов и ввода по URL
-- Эндпоинты чанкинга для RAG-приложений (иерархический и гибридный чанкинг)
-- Опциональный веб-интерфейс (`DOCLING_ENABLE_UI`)
-- Управление моделями через вспомогательный скрипт (`docling_manage`)
-- Данные документов остаются на вашем сервере — никакие данные не отправляются третьим сторонам
-- Ускорение на GPU NVIDIA (CUDA) для более быстрого инференса (тег образа `:cuda`)
-- Офлайн-режим — работа без доступа к интернету с предварительно кэшированными моделями (`DOCLING_LOCAL_ONLY`)
-- Автоматически собирается и публикуется через [GitHub Actions](https://github.com/hwdsl2/docker-docling/actions)
-- Постоянное хранение данных через Docker-том
-- Поддерживаемые платформы: `linux/amd64`, `linux/arm64`
+- **API конвертации документов:** преобразование PDF, DOCX, PPTX, HTML и других форматов в Markdown/JSON
+- **Конфиденциальная локальная обработка:** Данные документов остаются на вашем сервере — никакие данные не отправляются третьим сторонам
+- **Макет, OCR и таблицы:** На базе [IBM Docling](https://github.com/docling-project/docling) — высокоточный анализ макета, OCR и распознавание структуры таблиц
+- **Гибкий ввод и обработка:** Поддержка синхронной и асинхронной конвертации, загрузки файлов и ввода по URL
+- **Разбиение для RAG:** Эндпоинты чанкинга для RAG-приложений (иерархический и гибридный чанкинг)
+- **Веб-интерфейс для тестирования:** Опциональный веб-интерфейс (`DOCLING_ENABLE_UI`)
+- **Поддержка CPU и GPU:** работа на CPU или ускорение на GPU NVIDIA с образом `:cuda`.
+- **Работа без интернета:** работа без доступа к интернету с предварительно кэшированными моделями (`DOCLING_LOCAL_ONLY`)
+- **Автоматическая сборка:** образы автоматически собираются и публикуются через [GitHub Actions](https://github.com/hwdsl2/docker-docling/actions).
+
+Также доступен в составе [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-ru.md), который развёртывает полный AI-стек на собственном сервере одной командой.
 
 > 📘 [The Self-Hosted AI Builder’s Guide](https://books2read.com/aiguide?store=amazon): практическое руководство по созданию, защите и эксплуатации собственного приватного ИИ-стека.
 
