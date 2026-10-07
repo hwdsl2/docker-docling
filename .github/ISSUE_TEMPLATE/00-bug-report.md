@@ -8,9 +8,9 @@ assignees: ''
 ---
 **Checklist**
 
-- [ ] I read the [README](https://github.com/hwdsl2/docker-docling/blob/main/README.md) or the relevant section
-- [ ] I searched existing [Issues](https://github.com/hwdsl2/docker-docling/issues?q=is%3Aissue)
-- [ ] This issue is about the Docling Docker image/config/API, not only IBM Docling itself
+- [ ] I read the [README](https://github.com/hwdsl2/parsecrate/blob/main/README.md) or the relevant section
+- [ ] I searched existing [Issues](https://github.com/hwdsl2/parsecrate/issues?q=is%3Aissue)
+- [ ] This issue is about the ParseCrate Docker image/config/API, not only IBM Docling itself
 
 <!---
 If you found a reproducible bug in the upstream project itself, consider opening an issue upstream: [Docling](https://github.com/docling-project/docling).

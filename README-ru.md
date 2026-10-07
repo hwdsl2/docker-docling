@@ -1,10 +1,14 @@
 [English](README.md) | [简体中文](README-zh.md) | [繁體中文](README-zh-Hant.md) | [Русский](README-ru.md)
 
-# Docling — парсинг документов на Docker
+# ParseCrate
 
-[![Статус сборки](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-docling-server.svg)](https://hub.docker.com/r/hwdsl2/docling-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
+**API обработки документов с открытым исходным кодом для размещения на собственном сервере.**
 
-Docker-образ для запуска самостоятельно размещённого сервера парсинга документов на базе [IBM Docling](https://github.com/docling-project/docling). Конвертирует PDF, DOCX, PPTX, XLSX, HTML, Markdown, LaTeX и другие форматы в структурированный Markdown, JSON или HTML. Простой, приватный, для самостоятельного развёртывания.
+[![Статус сборки](https://github.com/hwdsl2/parsecrate/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/parsecrate/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-docling-server.svg)](https://hub.docker.com/r/hwdsl2/docling-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
+
+ParseCrate представляет собой API обработки документов для размещения на собственном сервере на базе [Docling](https://github.com/docling-project/docling) и [docling-serve](https://github.com/docling-project/docling-serve). Преобразует PDF, DOCX, PPTX, XLSX, HTML, Markdown, LaTeX и другие поддерживаемые форматы в структурированный Markdown, JSON или HTML на вашем сервере. Развёртывается с помощью Docker на CPU или NVIDIA GPU.
+
+> Ранее проект назывался **docker-docling**, сопровождается [hwdsl2](https://github.com/hwdsl2). Docker-образ остаётся `hwdsl2/docling-server`; существующая конфигурация, API-эндпоинты и постоянные данные сохраняют совместимость.
 
 **Возможности:**
 
@@ -16,7 +20,7 @@ Docker-образ для запуска самостоятельно разме�
 - **Веб-интерфейс для тестирования:** Опциональный веб-интерфейс (`DOCLING_ENABLE_UI`)
 - **Поддержка CPU и GPU:** работа на CPU или ускорение на GPU NVIDIA с образом `:cuda`.
 - **Работа без интернета:** работа без доступа к интернету с предварительно кэшированными моделями (`DOCLING_LOCAL_ONLY`)
-- **Автоматическая сборка:** образы автоматически собираются и публикуются через [GitHub Actions](https://github.com/hwdsl2/docker-docling/actions).
+- **Автоматическая сборка:** образы автоматически собираются и публикуются через [GitHub Actions](https://github.com/hwdsl2/parsecrate/actions).
 
 Также доступен в составе [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-ru.md), который развёртывает полный AI-стек на собственном сервере одной командой.
 
@@ -24,11 +28,11 @@ Docker-образ для запуска самостоятельно разме�
 
 **Также доступно:**
 
-- Связанные AI-сервисы: [ScribeCrate](https://github.com/hwdsl2/scribecrate/blob/main/README-ru.md), [Kokoro](https://github.com/hwdsl2/docker-kokoro/blob/main/README-ru.md), [Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-ru.md), [LiteLLM](https://github.com/hwdsl2/docker-litellm/blob/main/README-ru.md), [Ollama](https://github.com/hwdsl2/docker-ollama/blob/main/README-ru.md), [MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway/blob/main/README-ru.md)
+- Связанные AI-сервисы: [ScribeCrate](https://github.com/hwdsl2/scribecrate/blob/main/README-ru.md), [SpeakCrate](https://github.com/hwdsl2/speakcrate/blob/main/README-ru.md), [Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-ru.md), [LiteLLM](https://github.com/hwdsl2/docker-litellm/blob/main/README-ru.md), [Ollama](https://github.com/hwdsl2/docker-ollama/blob/main/README-ru.md), [MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway/blob/main/README-ru.md)
 
 ## Быстрый старт
 
-Используйте эту команду для запуска сервера парсинга документов:
+Используйте эту команду для запуска сервера ParseCrate:
 
 ```bash
 docker run \
@@ -109,7 +113,7 @@ docker run \
 docker logs docling
 ```
 
-Когда вы увидите "Docling document parsing server is ready", конвертируйте ваш первый документ:
+Когда вы увидите "ParseCrate document parsing server is ready", конвертируйте ваш первый документ:
 
 Новые установки с постоянным томом требуют API-ключ. Получите его для следующих примеров:
 
@@ -426,7 +430,7 @@ docker exec docling docling_manage --version
 
 ## Защита сервера
 
-Если ваш сервер Docling доступен из публичной сети — даже кратковременно — примените как минимум следующие меры защиты. Docling принимает загружаемые документы и выполняет ресурсоёмкий анализ на CPU/GPU, поэтому незащищённая конечная точка может быть использована для злоупотребления ресурсами и утечки данных.
+Если ваш сервер ParseCrate доступен из публичной сети — даже кратковременно — примените как минимум следующие меры защиты. ParseCrate принимает загружаемые документы и выполняет ресурсоёмкий анализ на CPU/GPU, поэтому незащищённая конечная точка может быть использована для злоупотребления ресурсами и утечки данных.
 
 **1. Используйте API-ключ.** Новые установки с подключённым томом `/var/lib/docling` автоматически генерируют API-ключ. Его можно посмотреть командой `docker exec docling docling_manage --showkey`; в скриптах используйте `docker exec docling docling_manage --getkey`. Существующие установки без ключа остаются открытыми для обратной совместимости; также можно задать `DOCLING_API_KEY` в env-файле вручную. Запросы к API конвертации и разбивки должны содержать заголовок `X-Api-Key: <key>`. Эндпоинты проверки работоспособности, версии и документации остаются доступными без ключа.
 
@@ -447,11 +451,11 @@ openssl rand -hex 32
 
 ## Использование обратного прокси
 
-Для развёртываний с доступом из интернета разместите обратный прокси перед сервером Docling для обработки HTTPS. Сервер работает без HTTPS в локальной или доверенной сети, но HTTPS рекомендуется при доступе API из публичного интернета.
+Для развёртываний с доступом из интернета разместите обратный прокси перед сервером ParseCrate для обработки HTTPS. Сервер работает без HTTPS в локальной или доверенной сети, но HTTPS рекомендуется при доступе API из публичного интернета.
 
-Для доступа к контейнеру Docling из обратного прокси используйте один из следующих адресов:
+Для доступа к контейнеру ParseCrate из обратного прокси используйте один из следующих адресов:
 
-- **`docling:5001`** — если обратный прокси работает как контейнер в **той же Docker-сети**, что и Docling (например, в том же `docker-compose.yml`).
+- **`docling:5001`** — если обратный прокси работает как контейнер в **той же Docker-сети**, что и ParseCrate (например, в том же `docker-compose.yml`).
 - **`127.0.0.1:5001`** — если обратный прокси работает **на хосте** и порт `5001` опубликован (по умолчанию в `docker-compose.yml`).
 
 **Пример с [Caddy](https://caddyserver.com/docs/) ([Docker-образ](https://hub.docker.com/_/caddy))** (автоматический TLS через Let's Encrypt, обратный прокси в той же Docker-сети):
@@ -509,9 +513,9 @@ docker rm -f docling
 
 ## Использование с другими AI-сервисами
 
-Docling можно использовать как службу преобразования документов в более широком self-hosted AI-стеке.
+ParseCrate можно использовать как службу преобразования документов в более широком self-hosted AI-стеке.
 
-Готовые полные и облегчённые стеки Docker Compose, примеры ручного запуска через `docker run`, а также примеры голосовых, RAG- и MCP-конвейеров с Kokoro, Embeddings, LiteLLM, Ollama, Docling и MCP Gateway см. в [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-ru.md).
+Готовые полные и облегчённые стеки Docker Compose, примеры ручного запуска через `docker run`, а также примеры голосовых, RAG- и MCP-конвейеров с SpeakCrate, Embeddings, LiteLLM, Ollama, ParseCrate и MCP Gateway см. в [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-ru.md).
 
 ## Счётчики использования
 

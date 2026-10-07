@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve this project. This repository maintains the Docker image for Docling; changes that only affect multi-service orchestration belong in [self-hosted-ai-stack](https://github.com/hwdsl2/self-hosted-ai-stack).
+Thanks for helping improve this project. This repository maintains ParseCrate, the self-hosted document processing API powered by Docling and docling-serve; changes that only affect multi-service orchestration belong in [self-hosted-ai-stack](https://github.com/hwdsl2/self-hosted-ai-stack).
 
 ## Before You Start
 

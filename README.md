@@ -1,10 +1,14 @@
 [English](README.md) | [简体中文](README-zh.md) | [繁體中文](README-zh-Hant.md) | [Русский](README-ru.md)
 
-# Docling Document Parsing on Docker
+# ParseCrate
 
-[![Build Status](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-docling-server.svg)](https://hub.docker.com/r/hwdsl2/docling-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
+**Open-source, self-hosted document processing API.**
 
-Docker image to run a self-hosted document parsing server, powered by [IBM Docling](https://github.com/docling-project/docling). Converts PDF, DOCX, PPTX, XLSX, HTML, Markdown, LaTeX, and more to structured Markdown, JSON, or HTML output. Designed to be simple, private, and self-hosted.
+[![Build Status](https://github.com/hwdsl2/parsecrate/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/parsecrate/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-docling-server.svg)](https://hub.docker.com/r/hwdsl2/docling-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
+
+ParseCrate is a self-hosted document processing API powered by [Docling](https://github.com/docling-project/docling) and [docling-serve](https://github.com/docling-project/docling-serve). Convert PDF, DOCX, PPTX, XLSX, HTML, Markdown, LaTeX, and other supported formats into structured Markdown, JSON, or HTML on your own server. Deploy with Docker on CPU or an NVIDIA GPU.
+
+> Previously known as **docker-docling**, maintained by [hwdsl2](https://github.com/hwdsl2). The Docker image remains `hwdsl2/docling-server`; existing configuration, API endpoints, and persistent data remain compatible.
 
 **Features:**
 
@@ -16,7 +20,7 @@ Docker image to run a self-hosted document parsing server, powered by [IBM Docli
 - **Web playground:** optional web UI playground enabled with `DOCLING_ENABLE_UI`.
 - **CPU and GPU support:** run on CPU or use the `:cuda` image for NVIDIA GPU acceleration.
 - **Offline operation:** run without internet access using pre-cached models (`DOCLING_LOCAL_ONLY`).
-- **Automated builds:** images are automatically built and published through [GitHub Actions](https://github.com/hwdsl2/docker-docling/actions).
+- **Automated builds:** images are automatically built and published through [GitHub Actions](https://github.com/hwdsl2/parsecrate/actions).
 
 Also available as part of the [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack), which deploys a complete self-hosted AI stack with a single command.
 
@@ -24,11 +28,11 @@ Also available as part of the [Self-Hosted AI Stack](https://github.com/hwdsl2/s
 
 **Also available:**
 
-- Related AI services: [ScribeCrate](https://github.com/hwdsl2/scribecrate), [Kokoro](https://github.com/hwdsl2/docker-kokoro), [Embeddings](https://github.com/hwdsl2/docker-embeddings), [LiteLLM](https://github.com/hwdsl2/docker-litellm), [Ollama](https://github.com/hwdsl2/docker-ollama), [MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway)
+- Related AI services: [ScribeCrate](https://github.com/hwdsl2/scribecrate), [SpeakCrate](https://github.com/hwdsl2/speakcrate), [Embeddings](https://github.com/hwdsl2/docker-embeddings), [LiteLLM](https://github.com/hwdsl2/docker-litellm), [Ollama](https://github.com/hwdsl2/docker-ollama), [MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway)
 
 ## Quick start
 
-Use this command to set up a document parsing server:
+Use this command to set up a ParseCrate server:
 
 ```bash
 docker run \
@@ -109,7 +113,7 @@ Models are baked into the image and loaded into memory on first start. Check the
 docker logs docling
 ```
 
-Once you see "Docling document parsing server is ready", convert your first document:
+Once you see "ParseCrate document parsing server is ready", convert your first document:
 
 Fresh persistent installations require an API key. Retrieve it for the following examples:
 
@@ -427,7 +431,7 @@ Output format is controlled per-request via the API. See the interactive API doc
 
 ## Securing your server
 
-If your Docling server is reachable from the public internet — even briefly — apply at minimum these protections. Docling accepts uploaded documents and performs CPU/GPU-intensive parsing, making an unprotected endpoint a target for resource abuse and data leakage.
+If your ParseCrate server is reachable from the public internet — even briefly — apply at minimum these protections. ParseCrate accepts uploaded documents and performs CPU/GPU-intensive parsing, making an unprotected endpoint a target for resource abuse and data leakage.
 
 **1. Use an API key.** Fresh installs with a mounted `/var/lib/docling` volume auto-generate an API key. Display it with `docker exec docling docling_manage --showkey`, or use `docker exec docling docling_manage --getkey` in scripts. Existing installs without a key remain open for backward compatibility; set `DOCLING_API_KEY` in your `env` file to enable authentication manually. Conversion and chunking API requests must include `X-Api-Key: <key>`. Health, version, and documentation endpoints remain accessible without the key.
 
@@ -448,11 +452,11 @@ openssl rand -hex 32
 
 ## Using a reverse proxy
 
-For internet-facing deployments, place a reverse proxy in front of the Docling server to handle HTTPS termination. The server works without HTTPS on a local or trusted network, but HTTPS is recommended when the API endpoint is exposed to the internet.
+For internet-facing deployments, place a reverse proxy in front of the ParseCrate server to handle HTTPS termination. The server works without HTTPS on a local or trusted network, but HTTPS is recommended when the API endpoint is exposed to the internet.
 
-Use one of the following addresses to reach the Docling container from your reverse proxy:
+Use one of the following addresses to reach the ParseCrate container from your reverse proxy:
 
-- **`docling:5001`** — if your reverse proxy runs as a container in the **same Docker network** as the Docling server (e.g. defined in the same `docker-compose.yml`).
+- **`docling:5001`** — if your reverse proxy runs as a container in the **same Docker network** as the ParseCrate server (e.g. defined in the same `docker-compose.yml`).
 - **`127.0.0.1:5001`** — if your reverse proxy runs **on the host** and port `5001` is published (the default `docker-compose.yml` publishes it).
 
 **Example with [Caddy](https://caddyserver.com/docs/) ([Docker image](https://hub.docker.com/_/caddy))** (automatic TLS via Let's Encrypt, reverse proxy in the same Docker network):
@@ -510,9 +514,9 @@ Your runtime data is preserved in the `docling-data` volume.
 
 ## Using with other AI services
 
-Docling can be used as the document conversion service in a broader self-hosted AI setup.
+ParseCrate can be used as the document conversion service in a broader self-hosted AI setup.
 
-For full and lightweight Docker Compose stacks, manual `docker run` examples, and voice/RAG/MCP pipeline examples with Kokoro, Embeddings, LiteLLM, Ollama, Docling, and MCP Gateway, see [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack).
+For full and lightweight Docker Compose stacks, manual `docker run` examples, and voice/RAG/MCP pipeline examples with SpeakCrate, Embeddings, LiteLLM, Ollama, ParseCrate, and MCP Gateway, see [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack).
 
 ## Usage counts
 

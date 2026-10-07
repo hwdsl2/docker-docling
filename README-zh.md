@@ -1,10 +1,14 @@
 [English](README.md) | [简体中文](README-zh.md) | [繁體中文](README-zh-Hant.md) | [Русский](README-ru.md)
 
-# Docling 文档解析 Docker 镜像
+# ParseCrate
 
-[![构建状态](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/docker-docling/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-docling-server.svg)](https://hub.docker.com/r/hwdsl2/docling-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
+**开源、自托管的文档处理 API。**
 
-使用 [IBM Docling](https://github.com/docling-project/docling) 在 Docker 容器中运行文档解析服务器。将 PDF、DOCX、PPTX、XLSX、HTML、Markdown、LaTeX 等格式转换为结构化的 Markdown、JSON 或 HTML 输出。简单、私密、可自托管。
+[![构建状态](https://github.com/hwdsl2/parsecrate/actions/workflows/main.yml/badge.svg)](https://github.com/hwdsl2/parsecrate/actions/workflows/main.yml) &nbsp;[![Docker Pulls](https://raw.githubusercontent.com/hwdsl2/badges/main/img/docker-pulls-docling-server.svg)](https://hub.docker.com/r/hwdsl2/docling-server) &nbsp;[![License: MIT](docs/images/license.svg)](https://opensource.org/licenses/MIT)
+
+ParseCrate 是一个自托管的文档处理 API，由 [Docling](https://github.com/docling-project/docling) 和 [docling-serve](https://github.com/docling-project/docling-serve) 提供支持。可在自己的服务器上将 PDF、DOCX、PPTX、XLSX、HTML、Markdown、LaTeX 及其他支持的格式转换为结构化的 Markdown、JSON 或 HTML。可使用 Docker 在 CPU 或 NVIDIA GPU 上部署。
+
+> 此项目原名为 **docker-docling**，由 [hwdsl2](https://github.com/hwdsl2) 维护。Docker 镜像仍为 `hwdsl2/docling-server`；现有配置、API 端点和持久化数据保持兼容。
 
 **功能特性：**
 
@@ -16,7 +20,7 @@
 - **Web 体验界面：** 可选的 Web UI 演示界面 (`DOCLING_ENABLE_UI`)
 - **CPU 和 GPU 支持：** 可在 CPU 上运行，或使用 `:cuda` 镜像启用 NVIDIA GPU 加速。
 - **离线运行：** 使用预先缓存的模型无需互联网访问 (`DOCLING_LOCAL_ONLY`)
-- **自动构建：** 通过 [GitHub Actions](https://github.com/hwdsl2/docker-docling/actions) 自动构建和发布
+- **自动构建：** 通过 [GitHub Actions](https://github.com/hwdsl2/parsecrate/actions) 自动构建和发布
 
 也可作为 [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh.md) 的一部分使用，一条命令即可部署完整的自托管 AI 技术栈。
 
@@ -24,11 +28,11 @@
 
 **另提供：**
 
-- 相关 AI 服务：[ScribeCrate](https://github.com/hwdsl2/scribecrate/blob/main/README-zh.md)、[Kokoro](https://github.com/hwdsl2/docker-kokoro/blob/main/README-zh.md)、[Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-zh.md)、[LiteLLM](https://github.com/hwdsl2/docker-litellm/blob/main/README-zh.md)、[Ollama](https://github.com/hwdsl2/docker-ollama/blob/main/README-zh.md)、[MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway/blob/main/README-zh.md)
+- 相关 AI 服务：[ScribeCrate](https://github.com/hwdsl2/scribecrate/blob/main/README-zh.md)、[SpeakCrate](https://github.com/hwdsl2/speakcrate/blob/main/README-zh.md)、[Embeddings](https://github.com/hwdsl2/docker-embeddings/blob/main/README-zh.md)、[LiteLLM](https://github.com/hwdsl2/docker-litellm/blob/main/README-zh.md)、[Ollama](https://github.com/hwdsl2/docker-ollama/blob/main/README-zh.md)、[MCP Gateway](https://github.com/hwdsl2/docker-mcp-gateway/blob/main/README-zh.md)
 
 ## 快速开始
 
-使用以下命令启动文档解析服务器：
+使用以下命令启动 ParseCrate 服务器：
 
 ```bash
 docker run \
@@ -109,7 +113,7 @@ docker run \
 docker logs docling
 ```
 
-看到 "Docling document parsing server is ready" 后，转换您的第一个文档：
+看到 "ParseCrate document parsing server is ready" 后，转换您的第一个文档：
 
 新的持久化安装需要 API 密钥。获取密钥以用于以下示例：
 
@@ -427,7 +431,7 @@ docker exec docling docling_manage --version
 
 ## 保护你的服务器
 
-如果你的 Docling 服务器可从公网访问 —— 即使只是短暂可达 —— 也请至少采取以下保护措施。Docling 接受上传的文档并进行 CPU/GPU 密集型解析，未做防护的接口可能遭受资源滥用和数据泄露。
+如果你的 ParseCrate 服务器可从公网访问 —— 即使只是短暂可达 —— 也请至少采取以下保护措施。ParseCrate 接受上传的文档并进行 CPU/GPU 密集型解析，未做防护的接口可能遭受资源滥用和数据泄露。
 
 **1. 使用 API 密钥。** 挂载 `/var/lib/docling` 数据卷的新安装会自动生成 API 密钥。可用 `docker exec docling docling_manage --showkey` 查看；脚本中可用 `docker exec docling docling_manage --getkey`。没有密钥的既有安装会保持开放以兼容旧行为；也可以在 `env` 文件中设置 `DOCLING_API_KEY` 手动启用认证。转换和分块 API 请求必须包含 `X-Api-Key: <key>`。健康检查、版本和文档端点无需密钥即可访问。
 
@@ -450,9 +454,9 @@ openssl rand -hex 32
 
 如需面向公网部署，可在文档解析服务器前置反向代理处理 HTTPS 终止。在本地或可信网络中使用无需 HTTPS，但将 API 端点暴露在公网时建议启用 HTTPS。
 
-从反向代理访问 Docling 容器时使用以下地址之一：
+从反向代理访问 ParseCrate 容器时使用以下地址之一：
 
-- **`docling:5001`** — 如果反向代理作为容器运行在与 Docling 服务器**同一 Docker 网络**中（例如定义在同一 `docker-compose.yml` 中）。
+- **`docling:5001`** — 如果反向代理作为容器运行在与 ParseCrate 服务器**同一 Docker 网络**中（例如定义在同一 `docker-compose.yml` 中）。
 - **`127.0.0.1:5001`** — 如果反向代理运行在**主机上**且端口 `5001` 已发布（默认 `docker-compose.yml` 会发布该端口）。
 
 **使用 [Caddy](https://caddyserver.com/docs/)（[Docker 镜像](https://hub.docker.com/_/caddy)）的示例**（自动 Let's Encrypt TLS，反向代理在同一 Docker 网络中）：
@@ -510,9 +514,9 @@ docker rm -f docling
 
 ## 与其他 AI 服务配合使用
 
-Docling 可作为更广泛的自托管 AI 设置中的文档转换服务。
+ParseCrate 可作为更广泛的自托管 AI 设置中的文档转换服务。
 
-如需完整和轻量级 Docker Compose 技术栈、手动 `docker run` 示例，以及结合 Kokoro、Embeddings、LiteLLM、Ollama、Docling 和 MCP Gateway 的语音/RAG/MCP 流水线示例，请参阅 [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh.md)。
+如需完整和轻量级 Docker Compose 技术栈、手动 `docker run` 示例，以及结合 SpeakCrate、Embeddings、LiteLLM、Ollama、ParseCrate 和 MCP Gateway 的语音/RAG/MCP 流水线示例，请参阅 [Self-Hosted AI Stack](https://github.com/hwdsl2/self-hosted-ai-stack/blob/main/README-zh.md)。
 
 ## 使用计数
 

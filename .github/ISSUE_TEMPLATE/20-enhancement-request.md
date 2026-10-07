@@ -8,9 +8,9 @@ assignees: ''
 ---
 **Checklist**
 
-- [ ] I searched existing [Issues](https://github.com/hwdsl2/docker-docling/issues?q=is%3Aissue), and did not find a similar enhancement request
-- [ ] I read the [README](https://github.com/hwdsl2/docker-docling/blob/main/README.md) or the relevant section
-- [ ] This request is about the Docling Docker image/config/API, not only IBM Docling itself
+- [ ] I searched existing [Issues](https://github.com/hwdsl2/parsecrate/issues?q=is%3Aissue), and did not find a similar enhancement request
+- [ ] I read the [README](https://github.com/hwdsl2/parsecrate/blob/main/README.md) or the relevant section
+- [ ] This request is about the ParseCrate Docker image/config/API, not only IBM Docling itself
 
 **Describe the enhancement request**
 A clear and concise description of your enhancement request.
