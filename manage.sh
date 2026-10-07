@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# https://github.com/hwdsl2/docker-docling
+# https://github.com/hwdsl2/parsecrate
 #
 # Copyright (C) 2026 Lin Song <linsongui@gmail.com>
 #
@@ -24,8 +24,8 @@ show_usage() {
   fi
   cat 1>&2 <<'EOF'
 
-Docling Docker - Server Management
-https://github.com/hwdsl2/docker-docling
+ParseCrate - Server Management
+https://github.com/hwdsl2/parsecrate
 
 Usage: docker exec <container> docling_manage [options]
 
@@ -93,7 +93,7 @@ load_config() {
 
 check_server() {
   if ! curl -sf "http://127.0.0.1:${DOCLING_PORT}/health" >/dev/null 2>&1; then
-    exiterr "Docling server is not responding on port ${DOCLING_PORT}. Is the container fully started?"
+    exiterr "ParseCrate server is not responding on port ${DOCLING_PORT}. Is the container fully started?"
   fi
 }
 
@@ -168,7 +168,7 @@ do_show_key() {
 
   echo
   echo "==========================================================="
-  echo " Docling API key"
+  echo " ParseCrate API key"
   echo "==========================================================="
   echo "${DOCLING_API_KEY}"
   echo "==========================================================="
@@ -196,7 +196,7 @@ do_get_key() {
 do_show_info() {
   echo
   echo "==========================================================="
-  echo " Docling Document Parsing Server"
+  echo " ParseCrate Document Parsing Server"
   echo "==========================================================="
   echo " Endpoint:     http://${SERVER_ADDR}:${DOCLING_PORT}"
   echo "==========================================================="

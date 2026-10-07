@@ -1,12 +1,12 @@
 #!/bin/bash
 #
-# Docker script to configure and start a Docling document parsing server
+# Docker script to configure and start a ParseCrate document parsing server
 #
 # DO NOT RUN THIS SCRIPT ON YOUR PC OR MAC! THIS IS ONLY MEANT TO BE RUN
 # IN A CONTAINER!
 #
-# This file is part of Docling Docker image, available at:
-# https://github.com/hwdsl2/docker-docling
+# This file is part of ParseCrate image, available at:
+# https://github.com/hwdsl2/parsecrate
 #
 # Copyright (C) 2026 Lin Song <linsongui@gmail.com>
 #
@@ -292,7 +292,7 @@ printf '%s' "$DOCLING_PORT" > /var/lib/docling/.port 2>/dev/null || true
 printf '%s' "$server_addr"  > /var/lib/docling/.server_addr 2>/dev/null || true
 
 echo
-echo "Docling Docker - https://github.com/hwdsl2/docker-docling"
+echo "ParseCrate - https://github.com/hwdsl2/parsecrate"
 
 if ! grep -q " /var/lib/docling " /proc/mounts 2>/dev/null; then
   echo
@@ -305,13 +305,13 @@ if ! grep -q " /var/lib/docling " /proc/mounts 2>/dev/null; then
   fi
 elif [ -z "$DOCLING_API_KEY" ] && [ -z "$DOCLING_API_KEY_WAS_SET" ] && $data_existing; then
   echo
-  echo "Warning: Existing Docling data was found but no API key is configured."
+  echo "Warning: Existing ParseCrate data was found but no API key is configured."
   echo "         Preserving no-auth behavior for backward compatibility."
   echo "         Set DOCLING_API_KEY to enable authentication."
 fi
 
 echo
-echo "Starting Docling document parsing server..."
+echo "Starting ParseCrate document parsing server..."
 echo "  Port:      $DOCLING_PORT"
 echo "  Device:    $DOCLING_DEVICE"
 echo "  Log level: $DOCLING_LOG_LEVEL"
@@ -328,7 +328,7 @@ echo
 # received during the model-loading startup phase is handled cleanly.
 cleanup() {
   echo
-  echo "Stopping Docling server..."
+  echo "Stopping ParseCrate server..."
   kill "${DOCLING_PID:-}" 2>/dev/null
   wait "${DOCLING_PID:-}" 2>/dev/null
   exit 0
@@ -360,9 +360,9 @@ wait_for_server() {
 
 if ! wait_for_server; then
   if ! kill -0 "$DOCLING_PID" 2>/dev/null; then
-    echo "Error: Docling server failed to start. Check the container logs for details." >&2
+    echo "Error: ParseCrate server failed to start. Check the container logs for details." >&2
   else
-    echo "Error: Docling server did not become ready within 600 seconds." >&2
+    echo "Error: ParseCrate server did not become ready within 600 seconds." >&2
     kill "$DOCLING_PID" 2>/dev/null
   fi
   exit 1
@@ -372,7 +372,7 @@ report_usage_counts
 
 echo
 echo "==========================================================="
-echo " Docling document parsing server is ready"
+echo " ParseCrate document parsing server is ready"
 echo "==========================================================="
 echo " Endpoint: http://${server_addr}:${DOCLING_PORT}"
 echo "==========================================================="
@@ -396,7 +396,7 @@ if [ "$DOCLING_ENABLE_UI" = "true" ]; then
 fi
 echo
 echo "To set up HTTPS, see: Using a reverse proxy"
-echo "  https://github.com/hwdsl2/docker-docling#using-a-reverse-proxy"
+echo "  https://github.com/hwdsl2/parsecrate#using-a-reverse-proxy"
 echo
 echo "Setup complete."
 echo
