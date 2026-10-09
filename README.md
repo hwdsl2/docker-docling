@@ -118,12 +118,12 @@ Once you see "ParseCrate document parsing server is ready", convert your first d
 Fresh persistent installations require an API key. Retrieve it for the following examples:
 
 ```bash
-docling_api_key="$(docker exec docling docling_manage --getkey)"
+parse_api_key="$(docker exec docling docling_manage --getkey)"
 ```
 
 ```bash
 curl -X POST http://your_server_ip:5001/v1/convert/source \
-    -H "X-Api-Key: $docling_api_key" \
+    -H "X-Api-Key: $parse_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -273,7 +273,7 @@ volumes:
 Fresh persistent installations require an API key. Retrieve it for the following examples:
 
 ```bash
-docling_api_key="$(docker exec docling docling_manage --getkey)"
+parse_api_key="$(docker exec docling docling_manage --getkey)"
 ```
 
 If API key authentication is disabled, omit the `X-Api-Key` header.
@@ -295,7 +295,7 @@ Content-Type: application/json
 
 ```bash
 curl -X POST http://your_server_ip:5001/v1/convert/source \
-    -H "X-Api-Key: $docling_api_key" \
+    -H "X-Api-Key: $parse_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -304,7 +304,7 @@ With API key authentication:
 
 ```bash
 curl -X POST http://your_server_ip:5001/v1/convert/source \
-    -H "X-Api-Key: $docling_api_key" \
+    -H "X-Api-Key: $parse_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -320,7 +320,7 @@ Content-Type: multipart/form-data
 
 ```bash
 curl -X POST http://your_server_ip:5001/v1/convert/file \
-    -H "X-Api-Key: $docling_api_key" \
+    -H "X-Api-Key: $parse_api_key" \
     -F "files=@document.pdf"
 ```
 

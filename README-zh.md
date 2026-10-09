@@ -118,12 +118,12 @@ docker logs docling
 新的持久化安装需要 API 密钥。获取密钥以用于以下示例：
 
 ```bash
-docling_api_key="$(docker exec docling docling_manage --getkey)"
+parse_api_key="$(docker exec docling docling_manage --getkey)"
 ```
 
 ```bash
 curl -X POST http://您的服务器IP:5001/v1/convert/source \
-    -H "X-Api-Key: $docling_api_key" \
+    -H "X-Api-Key: $parse_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -273,7 +273,7 @@ volumes:
 新的持久化安装需要 API 密钥。获取密钥以用于以下示例：
 
 ```bash
-docling_api_key="$(docker exec docling docling_manage --getkey)"
+parse_api_key="$(docker exec docling docling_manage --getkey)"
 ```
 
 如果已禁用 API 密钥认证，请省略 `X-Api-Key` 请求头。
@@ -295,7 +295,7 @@ Content-Type: application/json
 
 ```bash
 curl -X POST http://您的服务器IP:5001/v1/convert/source \
-    -H "X-Api-Key: $docling_api_key" \
+    -H "X-Api-Key: $parse_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -304,7 +304,7 @@ curl -X POST http://您的服务器IP:5001/v1/convert/source \
 
 ```bash
 curl -X POST http://您的服务器IP:5001/v1/convert/source \
-    -H "X-Api-Key: $docling_api_key" \
+    -H "X-Api-Key: $parse_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -320,7 +320,7 @@ Content-Type: multipart/form-data
 
 ```bash
 curl -X POST http://您的服务器IP:5001/v1/convert/file \
-    -H "X-Api-Key: $docling_api_key" \
+    -H "X-Api-Key: $parse_api_key" \
     -F "files=@document.pdf"
 ```
 

@@ -118,12 +118,12 @@ docker logs docling
 Новые установки с постоянным томом требуют API-ключ. Получите его для следующих примеров:
 
 ```bash
-docling_api_key="$(docker exec docling docling_manage --getkey)"
+parse_api_key="$(docker exec docling docling_manage --getkey)"
 ```
 
 ```bash
 curl -X POST http://IP_вашего_сервера:5001/v1/convert/source \
-    -H "X-Api-Key: $docling_api_key" \
+    -H "X-Api-Key: $parse_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -272,7 +272,7 @@ volumes:
 Новые установки с постоянным томом требуют API-ключ. Получите его для следующих примеров:
 
 ```bash
-docling_api_key="$(docker exec docling docling_manage --getkey)"
+parse_api_key="$(docker exec docling docling_manage --getkey)"
 ```
 
 Если аутентификация по API-ключу отключена, опустите заголовок `X-Api-Key`.
@@ -294,7 +294,7 @@ Content-Type: application/json
 
 ```bash
 curl -X POST http://IP_вашего_сервера:5001/v1/convert/source \
-    -H "X-Api-Key: $docling_api_key" \
+    -H "X-Api-Key: $parse_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -303,7 +303,7 @@ curl -X POST http://IP_вашего_сервера:5001/v1/convert/source \
 
 ```bash
 curl -X POST http://IP_вашего_сервера:5001/v1/convert/source \
-    -H "X-Api-Key: $docling_api_key" \
+    -H "X-Api-Key: $parse_api_key" \
     -H "Content-Type: application/json" \
     -d '{"sources": [{"kind": "http", "url": "https://arxiv.org/pdf/2501.17887"}]}'
 ```
@@ -319,7 +319,7 @@ Content-Type: multipart/form-data
 
 ```bash
 curl -X POST http://IP_вашего_сервера:5001/v1/convert/file \
-    -H "X-Api-Key: $docling_api_key" \
+    -H "X-Api-Key: $parse_api_key" \
     -F "files=@document.pdf"
 ```
 
