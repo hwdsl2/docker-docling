@@ -8,7 +8,7 @@
 
 ParseCrate представляет собой API обработки документов для размещения на собственном сервере на базе [Docling](https://github.com/docling-project/docling) и [docling-serve](https://github.com/docling-project/docling-serve). Преобразует PDF, DOCX, PPTX, XLSX, HTML, Markdown, LaTeX и другие поддерживаемые форматы в структурированный Markdown, JSON или HTML на вашем сервере. Развёртывается с помощью Docker на CPU или NVIDIA GPU.
 
-> Ранее проект назывался **docker-docling**, сопровождается [hwdsl2](https://github.com/hwdsl2). Docker-образ остаётся `hwdsl2/docling-server`; существующая конфигурация, API-эндпоинты и постоянные данные сохраняют совместимость.
+> Ранее проект назывался `docker-docling`. Его поддерживает [hwdsl2](https://github.com/hwdsl2). Docker-образ остаётся `hwdsl2/docling-server`.
 
 **Возможности:**
 
